@@ -22,9 +22,6 @@ namespace testClient
             StringClient client = new StringClient();
 
             var connected = client.ConnectAsync(endpoint);
-            Console.WriteLine("after connectAsync {0}", connected.Result);
-            connected.Wait();
-            Console.WriteLine("After wait connect: {0}", connected.Result);
 
             string cmd = "";
 
@@ -32,7 +29,9 @@ namespace testClient
             {
                 if (cmd != "")
                 {
-                    //Console.WriteLine(cmd);
+                    // Server Command
+                    // RequestEcho text
+                    // RequestAdd 2 1
                     byte[] data = Encoding.UTF8.GetBytes(cmd + "\r\n");
                     //client.Send(data, 0, data.Length);
                     log4j.Info("sending command: " + cmd);

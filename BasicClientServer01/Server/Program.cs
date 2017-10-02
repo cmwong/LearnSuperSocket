@@ -46,7 +46,7 @@ namespace Server
             string command = "";
             while (command != "q")
             {
-                // we only hv 2 command
+                // we only hv 2 Client command
                 // ResponseEcho text
                 // ResponseAdd value
                 foreach (StringSession s in appServer.GetAllSessions())
