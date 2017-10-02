@@ -1,0 +1,141 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using SuperSocket.ClientEngine;
+using SuperSocket.ProtoBase;
+using SuperSocket.ClientEngine.Protocol;
+using System.Threading;
+
+namespace MyClient
+{
+    public class StringClient : EasyClient<StringPackageInfo>
+    {
+        private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private Dictionary<string, ICommand<StringClient, StringPackageInfo>> m_CommandDict
+            = new Dictionary<string, ICommand<StringClient, StringPackageInfo>>(StringComparer.OrdinalIgnoreCase);
+
+        public StringClient() : base()
+        {
+            Init();
+        }
+
+        protected void Init()
+        {
+            Command.ResponseEcho echoCmd = new Command.ResponseEcho();
+            m_CommandDict.Add(echoCmd.Name, echoCmd);
+            Command.ResponseAdd addCmd = new Command.ResponseAdd();
+            m_CommandDict.Add(addCmd.Name, addCmd);
+
+
+            this.Error += new EventHandler<ErrorEventArgs>(Client_Error);
+            this.Connected += new EventHandler((s, e) =>
+            {
+                log4j.Info("connected");
+            });
+            this.Closed += new EventHandler((s, e) =>
+            {
+                log4j.Info("closed");
+            });
+
+            this.Initialize(new StringReceiveFilter());
+        }
+
+        protected void Client_Error(object sender, ErrorEventArgs e)
+        {
+            log4j.Error(string.Format("sender: {0}", sender), e.Exception);
+        }
+
+        protected override void HandlePackage(IPackageInfo package)
+        {
+            StringPackageInfo cmdInfo = (StringPackageInfo)package;
+            if (cmdInfo.Key.Contains("Response"))
+            {
+                ExceuteCommand(cmdInfo);
+            }
+            else
+            {
+                log4j.Info("unknow command: " + cmdInfo.Key + ", body: " + cmdInfo.Body);
+            }
+
+        }
+
+        protected void ExceuteCommand(StringPackageInfo cmdInfo)
+        {
+            if (m_CommandDict.TryGetValue(cmdInfo.Key, out ICommand<StringClient, StringPackageInfo> command))
+            {
+                command.ExecuteCommand(this, cmdInfo);
+            }
+            else
+            {
+                log4j.Info("unknow command: " + cmdInfo.Key + ", body: " + cmdInfo.Body);
+            }
+        }
+
+        public delegate void ResponseEchoHandler(string message);
+        public event ResponseEchoHandler OnResponseEcho;
+        internal void PushToResponseEchoHandler(string message)
+        {
+            OnResponseEcho?.Invoke(message);
+        }
+
+
+        protected delegate void ResponseAddHandler(Data.ResponseAdd responseAdd);
+        protected event ResponseAddHandler OnResponseAdd;
+
+        /// <summary>
+        /// this will call by Command Class ResponseAdd
+        /// </summary>
+        /// <param name="responseAdd"></param>
+        internal void PushToResponseAddHandler(Data.ResponseAdd responseAdd)
+        {
+            OnResponseAdd?.Invoke(responseAdd);
+        }
+
+        /// <summary>
+        /// Send command RequestAdd to server 
+        /// Receive a Data.ResponseAdd object
+        /// - async method
+        /// - will throw Exception "TimeOut"
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public async Task<Data.ResponseAdd> RequestAdd(params int[] param)
+        {
+            Data.RequestAdd requestAdd = new Data.RequestAdd { UUID = Guid.NewGuid().ToString() };
+            foreach (int p in param)
+            {
+                requestAdd.Param.Add(p);
+            }
+
+            // set a timeout on this call to server!
+            TaskCompletionSource<Data.ResponseAdd> tcs = new TaskCompletionSource<Data.ResponseAdd>();
+            const int timeOuts = 10000;     //miliseconds
+            CancellationTokenSource ct = new CancellationTokenSource(timeOuts);
+            ct.Token.Register(() => tcs.TrySetException(new Exception("TimeOut")), useSynchronizationContext: false);
+
+            ResponseAddHandler rah = ((rpAdd) =>
+            {
+                // only want the response UUID which is same as what we send
+                if(rpAdd.UUID == requestAdd.UUID)
+                {
+                    tcs.TrySetResult(rpAdd);
+                }
+            });
+
+            OnResponseAdd += rah;   //hook to the eventHandler
+            string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
+            Send(Encoding.UTF8.GetBytes(sendCmd));
+
+            Data.ResponseAdd responseAdd = await tcs.Task;
+            OnResponseAdd -= rah;   //after received our response, unhook it. we only expecting 1 response.
+
+            return responseAdd;
+
+        }
+
+    }
+}
