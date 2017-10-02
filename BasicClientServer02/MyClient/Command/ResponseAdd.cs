@@ -13,7 +13,7 @@ namespace MyClient.Command
 
         public override void ExecuteCommand(StringClient session, StringPackageInfo commandInfo)
         {
-            log4j.Info("ResponseAdd: " + commandInfo.Body);
+            log4j.Debug("ResponseAdd: " + commandInfo.Body);
 
             // after received data, pass the data to EventHandler
             Data.ResponseAdd responseAdd = Newtonsoft.Json.JsonConvert.DeserializeObject<Data.ResponseAdd>(commandInfo.Body);

@@ -17,8 +17,11 @@ namespace Server.Command
             log4j.Info("RequestAdd: " + requestInfo.Body);
             //session.Send("ResponseAdd " + requestInfo.Parameters.Select(p => Convert.ToInt32(p)).Sum().ToString());
 
-            //to test timeOut on client site.
-            //Task.Delay(20000).Wait();
+            ////to test timeOut on client site.
+            //int delay = new Random().Next(5, 15);
+            //delay *= 1000;
+            //Task.Delay(delay).Wait();
+            ////Task.Delay(20000).Wait();
 
             Data.RequestAdd requestAdd = Newtonsoft.Json.JsonConvert.DeserializeObject<Data.RequestAdd>(requestInfo.Body);
 

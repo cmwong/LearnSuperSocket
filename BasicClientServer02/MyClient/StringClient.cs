@@ -95,6 +95,17 @@ namespace MyClient
             OnResponseAdd?.Invoke(responseAdd);
         }
 
+        public void HandlerCount()
+        {
+            if (OnResponseAdd != null)
+            {
+                log4j.Info("OnResponseAdd.count: " + OnResponseAdd.GetInvocationList().Count());
+            } else
+            {
+                log4j.Info("OnResponseAdd empty");
+            }
+        }
+
         /// <summary>
         /// Send command RequestAdd to server 
         /// Receive a Data.ResponseAdd object
@@ -115,7 +126,6 @@ namespace MyClient
             TaskCompletionSource<Data.ResponseAdd> tcs = new TaskCompletionSource<Data.ResponseAdd>();
             const int timeOuts = 10000;     //miliseconds
             CancellationTokenSource ct = new CancellationTokenSource(timeOuts);
-            ct.Token.Register(() => tcs.TrySetException(new Exception("TimeOut")), useSynchronizationContext: false);
 
             ResponseAddHandler rah = ((rpAdd) =>
             {
@@ -125,6 +135,13 @@ namespace MyClient
                     tcs.TrySetResult(rpAdd);
                 }
             });
+
+            // when timeout occur, set Exception to TaskCompletionSource
+            // also remove the callback from eventhandler
+            ct.Token.Register(() => {
+                OnResponseAdd -= rah;
+                tcs.TrySetException(new TimeoutException("TimeOut " + timeOuts));
+            }, useSynchronizationContext: false);
 
             OnResponseAdd += rah;   //hook to the eventHandler
             string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";

@@ -24,7 +24,56 @@ namespace testClient
             var connected = client.ConnectAsync(endpoint);
 
             // test Command RequestAdd 
-            int v1 = 1;
+            BatchSendRequestAdd(client);
+
+            string cmd = "";
+            while (cmd != "q")
+            {
+                if (cmd == "1")
+                {
+                    int a = 4;
+                    int b = 4;
+                    try
+                    {
+                        Task<Data.ResponseAdd> response = client.RequestAdd(a, b);
+                        log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", a, b, response.Result.Result));
+                    }
+                    catch (TimeoutException ex)
+                    {
+                        log4j.Info("TimeOut", ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        log4j.Info("error", ex);
+                    }
+                }
+                else if (cmd == "2")
+                {
+                    client.HandlerCount();
+                }
+                else if(cmd == "3")
+                {
+                    BatchSendRequestAdd(client);
+                }
+                else if (cmd != "")
+                {
+                    // Server Command
+                    // RequestEcho text
+                    byte[] data = Encoding.UTF8.GetBytes(cmd + "\r\n");
+                    //client.Send(data, 0, data.Length);
+                    log4j.Info("sending raw command: " + cmd);
+                    client.Send(data);
+
+                }
+                cmd = Console.ReadLine();
+            }
+            client.Close();
+
+        }
+
+        private static void BatchSendRequestAdd(StringClient client)
+        {
+            int v1 = new Random().Next(3, 9);
             int[] v2 = new int[] { 1, 2, 3, 4, 5 };
             foreach (int i in v2)
             {
@@ -42,32 +91,6 @@ namespace testClient
                     }
                 });
             }
-            
-
-            string cmd = "";
-            while (cmd != "q")
-            {
-                if (cmd == "1")
-                {
-                    int a = 4;
-                    int b = 4;
-                    Task<Data.ResponseAdd> response = client.RequestAdd(a, b);
-                    log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", a, b, response.Result.Result));
-                }
-                else if (cmd != "")
-                {
-                    // Server Command
-                    // RequestEcho text
-                    byte[] data = Encoding.UTF8.GetBytes(cmd + "\r\n");
-                    //client.Send(data, 0, data.Length);
-                    log4j.Info("sending command: " + cmd);
-                    client.Send(data);
-
-                } 
-                cmd = Console.ReadLine();
-            }
-            client.Close();
-
         }
     }
 }
