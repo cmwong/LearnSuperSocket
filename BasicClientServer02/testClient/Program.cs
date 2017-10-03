@@ -35,7 +35,7 @@ namespace testClient
                     int b = 4;
                     try
                     {
-                        Task<Data.ResponseAdd> response = client.RequestAdd(a, b);
+                        Task<Data.ResponseAdd> response = client.RequestAddAsync(a, b);
                         log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", a, b, response.Result.Result));
                     }
                     catch (TimeoutException ex)
@@ -49,6 +49,7 @@ namespace testClient
                 }
                 else if (cmd == "2")
                 {
+                    //just to check and see did we remove the callback correctly!
                     client.HandlerCount();
                 }
                 else if(cmd == "3")
@@ -82,7 +83,7 @@ namespace testClient
                     try
                     {
                         log4j.Info(string.Format("RequestAdd {0} {1}", v1, i));
-                        Task<Data.ResponseAdd> responseAdd = client.RequestAdd(v1, i);
+                        Task<Data.ResponseAdd> responseAdd = client.RequestAddAsync(v1, i);
                         log4j.Info(string.Format("ResponseAdd {0} + {1} = {2}", v1, i, responseAdd.Result.Result));
                     }
                     catch (Exception ex)

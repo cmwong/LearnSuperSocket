@@ -114,7 +114,7 @@ namespace MyClient
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public async Task<Data.ResponseAdd> RequestAdd(params int[] param)
+        public async Task<Data.ResponseAdd> RequestAddAsync(params int[] param)
         {
             Data.RequestAdd requestAdd = new Data.RequestAdd { UUID = Guid.NewGuid().ToString() };
             foreach (int p in param)
