@@ -14,6 +14,8 @@ namespace Server.Command
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public override string Name => Data.Cmd.MyCommand.RequestAdd.ToString();
+
         Random random = new Random();
 
         public override void ExecuteCommand(StringSession session, StringRequestInfo requestInfo)
@@ -23,7 +25,7 @@ namespace Server.Command
             //session.Send("ResponseAdd " + requestInfo.Parameters.Select(p => Convert.ToInt32(p)).Sum().ToString());
 
             //////to test timeOut on client site.
-            int delay = random.Next(5, 15);
+            int delay = random.Next(1, 15);
             delay *= 1000;
             log4j.Info("delay: " + delay);
 
@@ -46,8 +48,9 @@ namespace Server.Command
                 Data.RequestAdd requestAdd = Newtonsoft.Json.JsonConvert.DeserializeObject<Data.RequestAdd>(requestInfo.Body);
                 Data.ResponseAdd responseAdd = new Data.ResponseAdd { UUID = requestAdd.UUID };
                 responseAdd.Result = requestAdd.Param.Sum();
-                session.Send("ResponseAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(responseAdd));
-                throw new Exception("wa haha!");
+                //session.Send("ResponseAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(responseAdd));
+                session.Send(Data.Cmd.MyCommand.ResponseAdd.ToString() + " " + Newtonsoft.Json.JsonConvert.SerializeObject(responseAdd));
+                //throw new Exception("wa haha!");
             });
 
             // handle exception throw in task

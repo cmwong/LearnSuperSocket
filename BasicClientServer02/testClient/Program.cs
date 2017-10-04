@@ -42,7 +42,8 @@ namespace testClient
                             Data.ResponseAdd response = client.RequestAdd(a, b);
                             log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", a, b, response.Result));
                         });
-                        client.Send(Encoding.UTF8.GetBytes("RequestEcho abcdefg\r\n"));
+                        //client.Send(Encoding.UTF8.GetBytes("RequestEcho abcdefg\r\n"));
+                        client.Send(Encoding.UTF8.GetBytes(Data.Cmd.MyCommand.RequestEcho.ToString() + " abcdefg\r\n"));
                         t1.Wait();
                     }
                     catch (TimeoutException ex)
@@ -63,16 +64,16 @@ namespace testClient
                 {
                     BatchSendRequestAdd(client);
                 }
-                else if (cmd != "")
-                {
-                    // Server Command
-                    // RequestEcho text
-                    byte[] data = Encoding.UTF8.GetBytes(cmd + "\r\n");
-                    //client.Send(data, 0, data.Length);
-                    log4j.Info("sending raw command: " + cmd);
-                    client.Send(data);
+                //else if (cmd != "")
+                //{
+                //    // Server Command
+                //    // RequestEcho text
+                //    byte[] data = Encoding.UTF8.GetBytes(cmd + "\r\n");
+                //    //client.Send(data, 0, data.Length);
+                //    log4j.Info("sending raw command: " + cmd);
+                //    client.Send(data);
 
-                }
+                //}
                 cmd = Console.ReadLine();
             }
             client.Close();

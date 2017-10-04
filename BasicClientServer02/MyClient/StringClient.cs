@@ -60,11 +60,12 @@ namespace MyClient
             {
                 log4j.Info("unknow command: " + cmdInfo.Key + ", body: " + cmdInfo.Body);
             }
-
+            //ExceuteCommand(cmdInfo);
         }
 
         protected void ExceuteCommand(StringPackageInfo cmdInfo)
         {
+            log4j.Info("key: " + cmdInfo.Key);
             if (m_CommandDict.TryGetValue(cmdInfo.Key, out ICommand<StringClient, StringPackageInfo> command))
             {
                 command.ExecuteCommand(this, cmdInfo);
@@ -144,7 +145,8 @@ namespace MyClient
             }, useSynchronizationContext: false);
 
             OnResponseAdd += rah;   //hook to the eventHandler
-            string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
+            //string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
+            string sendCmd = Data.Cmd.MyCommand.RequestAdd.ToString() + " " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
             Send(Encoding.UTF8.GetBytes(sendCmd));
 
             Data.ResponseAdd responseAdd = await tcs.Task;
@@ -184,7 +186,8 @@ namespace MyClient
             }, useSynchronizationContext: false);
 
             OnResponseAdd += rah;   //hook to the eventHandler
-            string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
+            //string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
+            string sendCmd = Data.Cmd.MyCommand.RequestAdd.ToString() + " " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
             Send(Encoding.UTF8.GetBytes(sendCmd));
 
             tcs.Task.Wait();

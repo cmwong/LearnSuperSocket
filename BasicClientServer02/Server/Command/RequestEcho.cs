@@ -12,6 +12,8 @@ namespace Server.Command
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public override string Name => Data.Cmd.MyCommand.RequestEcho.ToString();
+
         public override void ExecuteCommand(StringSession session, StringRequestInfo requestInfo)
         {
             session.Send("ResponseEcho " + requestInfo.Body);

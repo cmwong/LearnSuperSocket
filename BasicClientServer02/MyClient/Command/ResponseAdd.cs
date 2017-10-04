@@ -11,6 +11,8 @@ namespace MyClient.Command
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public override string Name => Data.Cmd.MyCommand.ResponseAdd.ToString();
+
         public override void ExecuteCommand(StringClient session, StringPackageInfo commandInfo)
         {
             log4j.Debug("ResponseAdd: " + commandInfo.Body);
