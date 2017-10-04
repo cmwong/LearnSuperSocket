@@ -43,7 +43,8 @@ namespace testClient
                             log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", a, b, response.Result));
                         });
                         //client.Send(Encoding.UTF8.GetBytes("RequestEcho abcdefg\r\n"));
-                        client.Send(Encoding.UTF8.GetBytes(Data.Cmd.MyCommand.RequestEcho.ToString() + " abcdefg\r\n"));
+                        //client.Send(Encoding.UTF8.GetBytes(Data.Cmd.MyCommand.RequestEcho.ToString() + " abcdefg\r\n"));
+                        client.RequestEcho("aaasslslslsl");
                         t1.Wait();
                     }
                     catch (TimeoutException ex)
@@ -72,7 +73,6 @@ namespace testClient
                 //    //client.Send(data, 0, data.Length);
                 //    log4j.Info("sending raw command: " + cmd);
                 //    client.Send(data);
-
                 //}
                 cmd = Console.ReadLine();
             }

@@ -44,6 +44,22 @@ namespace MyClient
             this.Initialize(new StringReceiveFilter());
         }
 
+        // hide the raw send 
+        // so who ever is using the client cannot send raw command
+        public new void Send(byte[] data)
+        {
+            throw new NotSupportedException();
+        }
+        public new void Send(ArraySegment<byte> segment)
+        {
+            throw new NotSupportedException();
+        }
+        public new void Send(List<ArraySegment<byte>> segments)
+        {
+            throw new NotSupportedException();
+        }
+        // end hide the raw send 
+
         protected void Client_Error(object sender, ErrorEventArgs e)
         {
             log4j.Error(string.Format("sender: {0}", sender), e.Exception);
@@ -65,7 +81,7 @@ namespace MyClient
 
         protected void ExceuteCommand(StringPackageInfo cmdInfo)
         {
-            log4j.Info("key: " + cmdInfo.Key);
+            //log4j.Info("key: " + cmdInfo.Key);
             if (m_CommandDict.TryGetValue(cmdInfo.Key, out ICommand<StringClient, StringPackageInfo> command))
             {
                 command.ExecuteCommand(this, cmdInfo);
@@ -147,7 +163,7 @@ namespace MyClient
             OnResponseAdd += rah;   //hook to the eventHandler
             //string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
             string sendCmd = Data.Cmd.MyCommand.RequestAdd.ToString() + " " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
-            Send(Encoding.UTF8.GetBytes(sendCmd));
+            base.Send(Encoding.UTF8.GetBytes(sendCmd));
 
             Data.ResponseAdd responseAdd = await tcs.Task;
             OnResponseAdd -= rah;   //after received our response, unhook it. we only expecting 1 response.
@@ -165,6 +181,7 @@ namespace MyClient
             }
 
             // set a timeout on this call to server!
+            // if we do not hv this timeout, calling this RequestAdd method will forever waiting if server never response!
             TaskCompletionSource<Data.ResponseAdd> tcs = new TaskCompletionSource<Data.ResponseAdd>();
             const int timeOuts = 10000;     //miliseconds
             CancellationTokenSource ct = new CancellationTokenSource(timeOuts);
@@ -188,7 +205,7 @@ namespace MyClient
             OnResponseAdd += rah;   //hook to the eventHandler
             //string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
             string sendCmd = Data.Cmd.MyCommand.RequestAdd.ToString() + " " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
-            Send(Encoding.UTF8.GetBytes(sendCmd));
+            base.Send(Encoding.UTF8.GetBytes(sendCmd));
 
             tcs.Task.Wait();
             Data.ResponseAdd responseAdd = tcs.Task.Result;
@@ -196,6 +213,11 @@ namespace MyClient
 
             return responseAdd;
 
+        }
+
+        public void RequestEcho(string message)
+        {
+            base.Send(Encoding.UTF8.GetBytes(Data.Cmd.MyCommand.RequestEcho + " " + message + "\r\n"));
         }
     }
 }
