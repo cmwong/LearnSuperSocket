@@ -154,5 +154,45 @@ namespace MyClient
 
         }
 
+        public Data.ResponseAdd RequestAdd(params int[] param)
+        {
+            Data.RequestAdd requestAdd = new Data.RequestAdd { UUID = Guid.NewGuid().ToString() };
+            foreach (int p in param)
+            {
+                requestAdd.Param.Add(p);
+            }
+
+            // set a timeout on this call to server!
+            TaskCompletionSource<Data.ResponseAdd> tcs = new TaskCompletionSource<Data.ResponseAdd>();
+            const int timeOuts = 10000;     //miliseconds
+            CancellationTokenSource ct = new CancellationTokenSource(timeOuts);
+
+            ResponseAddHandler rah = ((rpAdd) =>
+            {
+                // only want the response UUID which is same as what we send
+                if (rpAdd.UUID == requestAdd.UUID)
+                {
+                    tcs.TrySetResult(rpAdd);
+                }
+            });
+
+            // when timeout occur, set Exception to TaskCompletionSource
+            // also remove the callback from eventhandler
+            ct.Token.Register(() => {
+                OnResponseAdd -= rah;
+                tcs.TrySetException(new TimeoutException("TimeOut " + timeOuts));
+            }, useSynchronizationContext: false);
+
+            OnResponseAdd += rah;   //hook to the eventHandler
+            string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
+            Send(Encoding.UTF8.GetBytes(sendCmd));
+
+            tcs.Task.Wait();
+            Data.ResponseAdd responseAdd = tcs.Task.Result;
+            OnResponseAdd -= rah;   //after received our response, unhook it. we only expecting 1 response.
+
+            return responseAdd;
+
+        }
     }
 }

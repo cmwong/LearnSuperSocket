@@ -24,7 +24,7 @@ namespace testClient
             var connected = client.ConnectAsync(endpoint);
 
             // test Command RequestAdd 
-            BatchSendRequestAdd(client);
+            //BatchSendRequestAdd(client);
 
             string cmd = "";
             while (cmd != "q")
@@ -35,8 +35,15 @@ namespace testClient
                     int b = 4;
                     try
                     {
-                        Task<Data.ResponseAdd> response = client.RequestAddAsync(a, b);
-                        log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", a, b, response.Result.Result));
+                        //Task<Data.ResponseAdd> response = client.RequestAddAsync(a, b);
+                        //log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", a, b, response.Result.Result));
+                        Task t1 = Task.Factory.StartNew(() =>
+                        {
+                            Data.ResponseAdd response = client.RequestAdd(a, b);
+                            log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", a, b, response.Result));
+                        });
+                        client.Send(Encoding.UTF8.GetBytes("RequestEcho abcdefg\r\n"));
+                        t1.Wait();
                     }
                     catch (TimeoutException ex)
                     {
@@ -83,8 +90,12 @@ namespace testClient
                     try
                     {
                         log4j.Info(string.Format("RequestAdd {0} {1}", v1, i));
-                        Task<Data.ResponseAdd> responseAdd = client.RequestAddAsync(v1, i);
-                        log4j.Info(string.Format("ResponseAdd {0} + {1} = {2}", v1, i, responseAdd.Result.Result));
+                        //Task<Data.ResponseAdd> responseAdd = client.RequestAddAsync(v1, i);
+                        //log4j.Info(string.Format("ResponseAdd {0} + {1} = {2}", v1, i, responseAdd.Result.Result));
+
+                        Data.ResponseAdd response = client.RequestAdd(v1, i);
+                        log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", v1, i, response.Result));
+
                     }
                     catch (Exception ex)
                     {
