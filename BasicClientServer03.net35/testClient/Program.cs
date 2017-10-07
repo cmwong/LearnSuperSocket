@@ -19,9 +19,12 @@ namespace testClient
         static void Main(string[] args)
         {
             System.Net.IPEndPoint endpoint = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), 2012);
-            ITcpClientServer.ITcpEventClient client = new SPTcpClient(endpoint);
+            ITcpClientServer.ITcpEventClient client = new SPTcpClient(endpoint)
+            {
+                TimeOutMilliSec = 8000
+            };
 
-            client.TimeOutMilliSec = 8000;
+
             client.OnResponseEcho += new ITcpClientServer.ResponseEchoHandler(message =>
             {
                 log4j.Info("Received echo: " + message);
@@ -58,7 +61,7 @@ namespace testClient
                         //ae.Handle((x) =>
                         //{
                         //    Console.WriteLine(x.GetType().ToString());
-                        //    if (x is TimeoutException)
+                        //    if(x is TimeoutException)
                         //    {
                         //        log4j.Info("TimeOut", x);
                         //        return true;
@@ -66,7 +69,7 @@ namespace testClient
 
                         //    return true;
                         //});
-                        foreach (var e in ae.InnerExceptions)
+                        foreach(var e in ae.InnerExceptions)
                         {
                             Console.WriteLine(e.GetType().ToString());
                             if (e is TimeoutException)
@@ -74,7 +77,7 @@ namespace testClient
                                 log4j.Info("TimeOut", e);
                             }
                         }
-
+                        
                     }
                     catch (Exception ex)
                     {
