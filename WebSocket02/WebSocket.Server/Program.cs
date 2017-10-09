@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SuperSocket.SocketBase;
 using SuperSocket.WebSocket;
 using SuperSocket.SocketBase.Config;
+using SuperSocket.SocketEngine;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Config/log4net.config", Watch = true)]
 namespace WebSocket.Server
@@ -21,12 +22,12 @@ namespace WebSocket.Server
             var appServer = new MyAppServer();
 
             List<SuperSocket.SocketBase.Config.ICommandAssemblyConfig> cmdConfigs = new List<ICommandAssemblyConfig>();
-            
-            ServerConfig serverConfig = new ServerConfig
-            {
-                Port = 2012,
-                CommandLoader = "RequestAdd"
-            };
+
+            //ServerConfig serverConfig = new ServerConfig
+            //{
+            //    Port = 2012,
+            //    //CommandLoader = "RequestAdd"
+            //};
             //List<SuperSocket.SocketBase.Command.ICommandLoader<
             //    SuperSocket.SocketBase.Command.ICommand<JsonWebSocketSession, SuperSocket.WebSocket.Protocol.IWebSocketFragment>>> m_commandLoader =
             //    new List<SuperSocket.SocketBase.Command.ICommandLoader<SuperSocket.SocketBase.Command.ICommand<JsonWebSocketSession, SuperSocket.WebSocket.Protocol.IWebSocketFragment>>>();
@@ -37,13 +38,15 @@ namespace WebSocket.Server
 
 
             //Setup the appServer
-            //if (!appServer.Setup(2012)) //Setup with listening port
-            if(!appServer.Setup(serverConfig))
+            if (!appServer.Setup(2012)) //Setup with listening port
+            //if(!appServer.Setup(serverConfig))
             {
                 Console.WriteLine("Failed to setup!");
                 Console.ReadKey();
                 return;
             }
+
+
 
             //appServer.NewMessageReceived += new SessionHandler<WebSocketSession, string>(appServer_NewMessageReceived);
             //appServer.NewSessionConnected += new SessionHandler<WebSocketSession>((target) =>

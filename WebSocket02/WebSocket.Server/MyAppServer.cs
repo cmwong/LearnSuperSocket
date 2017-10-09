@@ -5,16 +5,29 @@ using System.Text;
 using System.Threading.Tasks;
 
 using SuperSocket.WebSocket;
-
+using SuperSocket.SocketBase.Command;
+using SuperSocket.WebSocket.SubProtocol;
+using SuperSocket.WebSocket.Protocol;
 namespace WebSocket.Server
 {
     public class MyAppServer : WebSocketServer<JsonWebSocketSession>
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        // override to use Newtonsoft.Json
+        public MyAppServer() : base()
+        {
+            //Dictionary<string, ICommand<MyAppSession, IWebSocketFragment>> cmd = new Dictionary<string, ICommand<MyAppSession, IWebSocketFragment>>();
+            //Command.RequestAdd requestAdd = new Command.RequestAdd();
+            //cmd.Add(requestAdd.Name, requestAdd);
+
+            //this.Setup
+        }
+
+
+        ////override to use Newtonsoft.Json
         public override string JsonSerialize(object target)
         {
+
             log4j.Info("serialize");
             return Newtonsoft.Json.JsonConvert.SerializeObject(target);
         }

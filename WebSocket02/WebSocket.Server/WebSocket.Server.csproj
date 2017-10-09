@@ -71,7 +71,7 @@
   <ItemGroup>
     <Compile Include="Command\RequestAdd.cs" />
     <Compile Include="MyAppServer.cs" />
-    <Compile Include="MySession.cs" />
+    <Compile Include="MyAppSession.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
