@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Configuration;
+
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Log.config", Watch = true)]
 namespace testClient
 {
@@ -15,7 +17,11 @@ namespace testClient
             log4j.Info("Start Main");
 
             //WebSocket4Net.JsonWebSocket websocket = new WebSocket4Net.JsonWebSocket("ws://127.0.0.1:2012");
-            WebSocket4Net.WebSocket websocket = new WebSocket4Net.WebSocket("ws://127.0.0.1:2012");
+            string serverIP = ConfigurationManager.AppSettings["ServerIP"].ToString();
+            string serverPort = ConfigurationManager.AppSettings["ServerPort"].ToString();
+
+            //WebSocket4Net.WebSocket websocket = new WebSocket4Net.WebSocket(string.Format("ws://{0}:{1}", serverIP, serverPort));
+            WebSocket.Client.MyJsonWebSocket websocket = new WebSocket.Client.MyJsonWebSocket(string.Format("ws://{0}:{1}", serverIP, serverPort));
 
             websocket.Opened += new EventHandler((s, e) =>
             {
@@ -25,11 +31,18 @@ namespace testClient
             {
                 log4j.Info("Closed");
             });
-            websocket.MessageReceived += new EventHandler<WebSocket4Net.MessageReceivedEventArgs>((s, e) =>
+            websocket.Error += new EventHandler<SuperSocket.ClientEngine.ErrorEventArgs>((s, e) =>
             {
-                log4j.Info("received from server: " + e.Message);
+                log4j.Info("error", e.Exception);
             });
-
+            //websocket.MessageReceived += new EventHandler<WebSocket4Net.MessageReceivedEventArgs>((s, e) =>
+            //{
+            //    log4j.Info("received from server: " + e.Message);
+            //});
+            websocket.On<WebSocket.Data.ResponseAdd>(WebSocket.Data.Cmd.TcsCommand.ResponseAdd.ToString(), (e) =>
+            {
+                log4j.Info("OnResponseAdd: " + e.Result);
+            });
 
             websocket.Open();
             log4j.Info(websocket.State);
@@ -39,9 +52,10 @@ namespace testClient
             {
 
                 //websocket.
-                if(cmd != "")
+                if(cmd == "1")
                 {
-                    websocket.Send(cmd);
+                    //websocket.Send(cmd);
+                    websocket.RequestAdd(0, 2, 2);
                 }
                 cmd = Console.ReadLine();
             }

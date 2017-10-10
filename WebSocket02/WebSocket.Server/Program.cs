@@ -18,27 +18,20 @@ namespace WebSocket.Server
         static void Main(string[] args)
         {
             log4j.Info("Start Main");
-            //var appServer = new WebSocketServer();
+
             var appServer = new MyAppServer();
+            //var appServer = new WebSocketServer();
 
-            List<SuperSocket.SocketBase.Config.ICommandAssemblyConfig> cmdConfigs = new List<ICommandAssemblyConfig>();
-
-            //ServerConfig serverConfig = new ServerConfig
-            //{
-            //    Port = 2012,
-            //    //CommandLoader = "RequestAdd"
-            //};
-            //List<SuperSocket.SocketBase.Command.ICommandLoader<
-            //    SuperSocket.SocketBase.Command.ICommand<JsonWebSocketSession, SuperSocket.WebSocket.Protocol.IWebSocketFragment>>> m_commandLoader =
-            //    new List<SuperSocket.SocketBase.Command.ICommandLoader<SuperSocket.SocketBase.Command.ICommand<JsonWebSocketSession, SuperSocket.WebSocket.Protocol.IWebSocketFragment>>>();
-
-            //m_commandLoader.Add(new )
-
-            //appServer.Setup(serverConfig, null, null, null, null,)
+            var serverConfig = new ServerConfig
+            {
+                Port = 2012,
+                LogBasicSessionActivity = true,
+                LogCommand = true
+            };
 
 
             //Setup the appServer
-            if (!appServer.Setup(2012)) //Setup with listening port
+            if (!appServer.Setup(serverConfig)) //Setup with listening port
             //if(!appServer.Setup(serverConfig))
             {
                 Console.WriteLine("Failed to setup!");
@@ -47,8 +40,9 @@ namespace WebSocket.Server
             }
 
 
-
-            //appServer.NewMessageReceived += new SessionHandler<WebSocketSession, string>(appServer_NewMessageReceived);
+            // WebSocketServer.cs line 531
+            // if we hook to NewMessageReceived, server won't ExecuteMessage (won't execute our command)
+            //appServer.NewMessageReceived += new SessionHandler<WebSocketSession, string>(AppServer_NewMessageReceived);
             //appServer.NewSessionConnected += new SessionHandler<WebSocketSession>((target) =>
             //{
             //    log4j.Info("client connected: " + target.SessionID);
@@ -57,10 +51,11 @@ namespace WebSocket.Server
             {
                 log4j.Info("client connected: " + s.SessionID);
             });
-            appServer.NewMessageReceived += new SessionHandler<JsonWebSocketSession, string>((s, message) =>
-            {
-                log4j.Info("message: " + message);
-            });
+
+            //appServer.NewMessageReceived += new SessionHandler<JsonWebSocketSession, string>((s, message) =>
+            //{
+            //    log4j.Info("message: " + message);
+            //});
 
 
             Console.WriteLine();
@@ -95,15 +90,15 @@ namespace WebSocket.Server
             Console.WriteLine("The server was stopped!");
         }
 
-        static void appServer_NewMessageReceived(WebSocketSession session, string message)
+        static void AppServer_NewMessageReceived(WebSocketSession session, string message)
         {
-            log4j.Info(message);
+            log4j.Info("message: " + message);
             //Send the received message back
             //session.Send(message);
-            foreach(var s in session.AppServer.GetAllSessions())
-            {
-                s.Send(message);
-            }
+            //foreach(var s in session.AppServer.GetAllSessions())
+            //{
+            //    s.Send(message);
+            //}
         }
 
     }

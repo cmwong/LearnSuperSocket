@@ -8,7 +8,7 @@ using SuperSocket.WebSocket;
 
 namespace WebSocket.Server
 {
-    public class MyAppSession : JsonWebSocketSession<MyAppSession>
+    public class MyAppSession : WebSocketSession<MyAppSession>
     {
     }
 }

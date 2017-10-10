@@ -41,6 +41,7 @@
       <HintPath>..\packages\SuperSocket.ClientEngine.Core.0.8.0.13\lib\net45\SuperSocket.ClientEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -60,6 +61,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebSocket.Client\WebSocket.Client.csproj">
+      <Project>{d111b854-8a7a-43da-bb29-8cc696f9e9fe}</Project>
+      <Name>WebSocket.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebSocket.Data\WebSocket.Data.csproj">
+      <Project>{a76b52d4-dd07-42c7-b1b7-ebbb5f5d277b}</Project>
+      <Name>WebSocket.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

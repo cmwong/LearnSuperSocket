@@ -14,17 +14,20 @@ namespace WebSocket.Server
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MyAppServer() : base()
-        {
-            //Dictionary<string, ICommand<MyAppSession, IWebSocketFragment>> cmd = new Dictionary<string, ICommand<MyAppSession, IWebSocketFragment>>();
-            //Command.RequestAdd requestAdd = new Command.RequestAdd();
-            //cmd.Add(requestAdd.Name, requestAdd);
+        //public MyAppServer() : base()
+        //{
+        //    Dictionary<string, ICommand<MyAppSession, IWebSocketFragment>> cmd = new Dictionary<string, ICommand<MyAppSession, IWebSocketFragment>>();
+        //    //Dictionary<string, ISubCommand<MyAppSession>> cmd = new Dictionary<string, ISubCommand<MyAppSession>>();
 
-            //this.Setup
-        }
+        //    Command.RequestAdd requestAdd = new Command.RequestAdd();
+        //    cmd.Add(requestAdd.Name, requestAdd);
+
+        //    //this.SetupCommands(cmd);
+
+        //}
 
 
-        ////override to use Newtonsoft.Json
+        //override to use Newtonsoft.Json
         public override string JsonSerialize(object target)
         {
 

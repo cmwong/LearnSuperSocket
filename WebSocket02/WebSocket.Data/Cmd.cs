@@ -12,7 +12,7 @@ namespace WebSocket.Data
             RequestEcho = 0,
             ResponseEcho = 1,
             RequestAdd = 2,
-            ResponseAdd = 3
+            ResponseAdd = 3,
         }
     }
 }
