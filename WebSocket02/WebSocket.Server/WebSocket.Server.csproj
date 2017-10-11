@@ -86,10 +86,6 @@
     <None Include="supersocket.sh" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="jquery.js" />
-    <Content Include="Test.htm" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\WebSocket.Data\WebSocket.Data.csproj">
       <Project>{a76b52d4-dd07-42c7-b1b7-ebbb5f5d277b}</Project>
       <Name>WebSocket.Data</Name>
