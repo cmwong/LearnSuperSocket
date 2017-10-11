@@ -95,7 +95,21 @@ namespace SuperSocketClient
         /// <param name="responseAdd"></param>
         internal void PushToResponseAddHandler(ResponseAdd responseAdd)
         {
-            OnResponseAdd?.Invoke(responseAdd);
+            //OnResponseAdd?.Invoke(responseAdd);
+            OnResponseAdd?.BeginInvoke(responseAdd, (iar) =>
+            {
+                log4j.Info("endInvoke");
+                var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
+                var invokeMethod = (ResponseAddHandler)ar.AsyncDelegate;
+                try
+                {
+                    invokeMethod.EndInvoke(iar);
+                }
+                catch (Exception ex)
+                {
+                    log4j.Error(invokeMethod.ToString(), ex);
+                }
+            }, null);
         }
 
         public void HandlerCount()

@@ -13,45 +13,55 @@ namespace WebSocket.Client
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MyJsonWebSocket(string uri) : base(uri) {
+        public MyJsonWebSocket(string uri) : base(uri)
+        {
             Init();
         }
-        public MyJsonWebSocket(string uri, WebSocketVersion version) : base(uri, version) {
+        public MyJsonWebSocket(string uri, WebSocketVersion version) : base(uri, version)
+        {
             Init();
         }
-        public MyJsonWebSocket(string uri, string subProtocol) : base(uri, subProtocol) {
+        public MyJsonWebSocket(string uri, string subProtocol) : base(uri, subProtocol)
+        {
             Init();
         }
-        public MyJsonWebSocket(string uri, List<KeyValuePair<string, string>> cookies) 
-            : base(uri, string.Empty, cookies, WebSocketVersion.None) {
+        public MyJsonWebSocket(string uri, List<KeyValuePair<string, string>> cookies)
+            : base(uri, string.Empty, cookies, WebSocketVersion.None)
+        {
             Init();
         }
 
         public MyJsonWebSocket(string uri, string subProtocol, List<KeyValuePair<string, string>> cookies)
-            : base(uri, subProtocol, cookies, WebSocketVersion.None) {
+            : base(uri, subProtocol, cookies, WebSocketVersion.None)
+        {
             Init();
         }
         public MyJsonWebSocket(string uri, string subProtocol, WebSocketVersion version)
-            : base(uri, subProtocol, version) {
+            : base(uri, subProtocol, version)
+        {
             Init();
         }
 
         public MyJsonWebSocket(string uri, string subProtocol, List<KeyValuePair<string, string>> cookies, WebSocketVersion version)
-            : base(uri, subProtocol, cookies, null, string.Empty, string.Empty, version) {
+            : base(uri, subProtocol, cookies, null, string.Empty, string.Empty, version)
+        {
             Init();
         }
 
         public MyJsonWebSocket(string uri, string subProtocol, List<KeyValuePair<string, string>> cookies, List<KeyValuePair<string, string>> customHeaderItems, string userAgent, WebSocketVersion version)
-            : base(uri, subProtocol, cookies, customHeaderItems, userAgent, string.Empty, version) {
+            : base(uri, subProtocol, cookies, customHeaderItems, userAgent, string.Empty, version)
+        {
             Init();
         }
 
         public MyJsonWebSocket(string uri, string subProtocol, List<KeyValuePair<string, string>> cookies, List<KeyValuePair<string, string>> customHeaderItems, string userAgent, string origin, WebSocketVersion version)
-            : base(uri, subProtocol, cookies, customHeaderItems, userAgent, version) {
+            : base(uri, subProtocol, cookies, customHeaderItems, userAgent, version)
+        {
             Init();
         }
 
-        public MyJsonWebSocket(WebSocket4Net.WebSocket webSocket) : base(webSocket) {
+        public MyJsonWebSocket(WebSocket4Net.WebSocket webSocket) : base(webSocket)
+        {
             Init();
         }
 
@@ -61,7 +71,47 @@ namespace WebSocket.Client
             {
                 // when received data ResponseAdd from server
                 //log4j.Info("OnResponseAdd: " + data.Result);
-                OnResponseAdd?.Invoke(data);
+                //OnResponseAdd?.Invoke(data);
+
+                // test BeginInvoke
+                if(OnResponseAdd != null)
+                {
+                    Delegate[] eventListeners = OnResponseAdd.GetInvocationList();
+                    for(int i=0; i < eventListeners.Length; i++)
+                    {
+                        ResponseAddHandler methodToInvoke = (ResponseAddHandler)eventListeners[i];
+                        methodToInvoke.BeginInvoke(data, (iar) =>
+                        {
+                            log4j.Info("endInvoke");
+                            var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
+                            var invokeMethod = (ResponseAddHandler)ar.AsyncDelegate;
+                            try
+                            {
+                                invokeMethod.EndInvoke(iar);
+                            }
+                            catch (Exception ex)
+                            {
+                                log4j.Error(invokeMethod.ToString(), ex);
+                            }
+                        }, null);
+                    }
+                }
+
+                /// cannot use this (must use GetInvocationList())
+                //OnResponseAdd?.BeginInvoke(data, (iar) =>
+                //{
+                //    log4j.Info("endInvoke");
+                //    var ar = (System.Runtime.Remoting.Messaging.AsyncResult)iar;
+                //    var invokeMethod = (ResponseAddHandler)ar.AsyncDelegate;
+                //    try
+                //    {
+                //        invokeMethod.EndInvoke(iar);
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        log4j.Error(invokeMethod.ToString(), ex);
+                //    }
+                //}, null);
             });
 
             On<Data.ResponseEcho>(Data.Cmd.TcsCommand.ResponseEcho.ToString(), (data) =>
@@ -86,7 +136,8 @@ namespace WebSocket.Client
 
         public void RequestEcho(string message)
         {
-            Data.RequestEcho requestEcho = new Data.RequestEcho {
+            Data.RequestEcho requestEcho = new Data.RequestEcho
+            {
                 UUID = Guid.NewGuid().ToString(),
                 Message = message
             };
@@ -104,8 +155,6 @@ namespace WebSocket.Client
             {
                 requestAdd.Param.Add(p);
             }
-
-            //Send(Data.Cmd.TcsCommand.RequestAdd.ToString(), requestAdd);
 
             // set a timeout on this call to server!
             // if we do not hv this timeout, calling this RequestAdd method will forever waiting if server never response!
@@ -130,9 +179,6 @@ namespace WebSocket.Client
             }, useSynchronizationContext: false);
 
             OnResponseAdd += rah;   //hook to the eventHandler
-            //string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
-            //string sendCmd = WebSocket.Data.Cmd.TcsCommand.RequestAdd.ToString() + " " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
-            //base.Send(Encoding.UTF8.GetBytes(sendCmd));
             Send(WebSocket.Data.Cmd.TcsCommand.RequestAdd.ToString(), requestAdd);
 
             tcs.Task.Wait();
@@ -141,5 +187,19 @@ namespace WebSocket.Client
 
             return responseAdd;
         }
+
+
+        public void HandlerCount()
+        {
+            if (OnResponseAdd != null)
+            {
+                log4j.Info("OnResponseAdd.count: " + OnResponseAdd.GetInvocationList().Count());
+            }
+            else
+            {
+                log4j.Info("OnResponseAdd empty");
+            }
+        }
+
     }
 }

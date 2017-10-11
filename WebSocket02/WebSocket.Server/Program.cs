@@ -25,8 +25,8 @@ namespace WebSocket.Server
             var serverConfig = new ServerConfig
             {
                 Port = 2012,
-                LogBasicSessionActivity = true,
-                LogCommand = true
+                LogBasicSessionActivity = false,
+                LogCommand = false
             };
 
 

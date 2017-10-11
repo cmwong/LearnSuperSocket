@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using System.Configuration;
 
@@ -42,10 +43,6 @@ namespace testClient
             
             IClient.IMyClient websocket = new WebSocket.Client.MyWebSocketClient(serverIP, int.Parse(serverPort));
             websocket.TimeOutMilliSec = 8000;
-            websocket.OnResponseEcho += new IClient.ResponseEchoHandler((responseEcho) =>
-            {
-                log4j.Info("Received echo: " + responseEcho.Message);
-            });
             websocket.OnClosed += new EventHandler((s, e) =>
             {
                 log4j.Info("Closed");
@@ -58,6 +55,14 @@ namespace testClient
             {
                 log4j.Info("connected");
             });
+
+
+            // handle data send from server!!
+            websocket.OnResponseEcho += new IClient.ResponseEchoHandler((responseEcho) =>
+            {
+                log4j.Info("Received echo: " + responseEcho.Message);
+            });
+
 
             websocket.Start();
             log4j.Info("client isconnected: " + websocket.IsConnected());
@@ -72,6 +77,7 @@ namespace testClient
                     //websocket.Send(cmd);
                     try
                     {
+                        // call the server command and wait for the data!!
                         WebSocket.Data.ResponseAdd responseAdd = websocket.RequestAdd(1, 2, 2);
                         log4j.Info("ResponseAdd: " + responseAdd.Result);
                     } catch(Exception ex)
@@ -88,10 +94,44 @@ namespace testClient
                 {
                     log4j.Info("isConnected: " + websocket.IsConnected());
                 }
+                else if(cmd == "4")
+                {
+                    BatchSendRequestAdd(websocket);
+                } else if(cmd == "5")
+                {
+                    ((WebSocket.Client.MyWebSocketClient)websocket).HandlerCount();
+                }
                 cmd = Console.ReadLine();
             }
             //websocket.close();
             websocket.Stop();
+        }
+
+        private static void BatchSendRequestAdd(IClient.IMyClient myClient)
+        {
+            int v1 = new Random().Next(3, 9);
+            int[] v2 = new int[] { 1, 2, 3, 4, 5 };
+            foreach (int i in v2)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        log4j.Info(string.Format("RequestAdd {0} {1}", v1, i));
+                        //Task<Data.ResponseAdd> responseAdd = client.RequestAddAsync(v1, i);
+                        //log4j.Info(string.Format("ResponseAdd {0} + {1} = {2}", v1, i, responseAdd.Result.Result));
+
+                        WebSocket.Data.ResponseAdd response = myClient.RequestAdd(v1, i);
+                        log4j.Info(string.Format("responseAdd: {0} + {1} = {2}", v1, i, response.Result));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        log4j.Info(string.Format("RequestAdd {0} {1} {2}", v1, i, ex.Message));
+                    }
+                });
+            }
+
         }
     }
 }

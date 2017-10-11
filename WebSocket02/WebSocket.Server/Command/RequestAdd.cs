@@ -26,7 +26,7 @@ namespace WebSocket.Server.Command
             //session.Send("ResponseAdd " + requestInfo.Parameters.Select(p => Convert.ToInt32(p)).Sum().ToString());
 
             //////to test timeOut on client site.
-            int delay = random.Next(1, 15);
+            int delay = random.Next(1, 10);
             delay *= 1000;
             log4j.Info("delay: " + delay);
 

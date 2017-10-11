@@ -30,14 +30,13 @@ namespace WebSocket.Server
         //override to use Newtonsoft.Json
         public override string JsonSerialize(object target)
         {
-
-            log4j.Info("serialize");
+            //log4j.Info("serialize");
             return Newtonsoft.Json.JsonConvert.SerializeObject(target);
         }
 
         public override object JsonDeserialize(string json, Type type)
         {
-            log4j.Info("deserialize");
+            //log4j.Info("deserialize");
             return Newtonsoft.Json.JsonConvert.DeserializeObject(json, type);
         }
     }

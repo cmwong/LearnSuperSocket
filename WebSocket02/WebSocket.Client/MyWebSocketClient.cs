@@ -96,5 +96,11 @@ namespace WebSocket.Client
         {
             sClient.RequestEcho(message);
         }
+
+        public void HandlerCount()
+        {
+            sClient.HandlerCount();
+        }
+
     }
 }
