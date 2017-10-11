@@ -13,27 +13,55 @@ namespace WebSocket.Client
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public MyJsonWebSocket(string uri) : base(uri) { }
-        public MyJsonWebSocket(string uri, WebSocketVersion version) : base(uri, version) { }
-        public MyJsonWebSocket(string uri, string subProtocol) : base(uri, subProtocol) { }
+        public MyJsonWebSocket(string uri) : base(uri) {
+            Init();
+        }
+        public MyJsonWebSocket(string uri, WebSocketVersion version) : base(uri, version) {
+            Init();
+        }
+        public MyJsonWebSocket(string uri, string subProtocol) : base(uri, subProtocol) {
+            Init();
+        }
         public MyJsonWebSocket(string uri, List<KeyValuePair<string, string>> cookies) 
-            : base(uri, string.Empty, cookies, WebSocketVersion.None) { }
+            : base(uri, string.Empty, cookies, WebSocketVersion.None) {
+            Init();
+        }
 
         public MyJsonWebSocket(string uri, string subProtocol, List<KeyValuePair<string, string>> cookies)
-            : base(uri, subProtocol, cookies, WebSocketVersion.None) { }
+            : base(uri, subProtocol, cookies, WebSocketVersion.None) {
+            Init();
+        }
         public MyJsonWebSocket(string uri, string subProtocol, WebSocketVersion version)
-            : base(uri, subProtocol, version) { }
+            : base(uri, subProtocol, version) {
+            Init();
+        }
 
         public MyJsonWebSocket(string uri, string subProtocol, List<KeyValuePair<string, string>> cookies, WebSocketVersion version)
-            : base(uri, subProtocol, cookies, null, string.Empty, string.Empty, version) { }
+            : base(uri, subProtocol, cookies, null, string.Empty, string.Empty, version) {
+            Init();
+        }
 
         public MyJsonWebSocket(string uri, string subProtocol, List<KeyValuePair<string, string>> cookies, List<KeyValuePair<string, string>> customHeaderItems, string userAgent, WebSocketVersion version)
-            : base(uri, subProtocol, cookies, customHeaderItems, userAgent, string.Empty, version) { }
+            : base(uri, subProtocol, cookies, customHeaderItems, userAgent, string.Empty, version) {
+            Init();
+        }
 
         public MyJsonWebSocket(string uri, string subProtocol, List<KeyValuePair<string, string>> cookies, List<KeyValuePair<string, string>> customHeaderItems, string userAgent, string origin, WebSocketVersion version)
-            : base(uri, subProtocol, cookies, customHeaderItems, userAgent, version) { }
+            : base(uri, subProtocol, cookies, customHeaderItems, userAgent, version) {
+            Init();
+        }
 
-        public MyJsonWebSocket(WebSocket4Net.WebSocket webSocket) : base(webSocket) { }
+        public MyJsonWebSocket(WebSocket4Net.WebSocket webSocket) : base(webSocket) {
+            Init();
+        }
+
+        protected void Init()
+        {
+            On<Data.ResponseAdd>(Data.Cmd.TcsCommand.ResponseAdd.ToString(), (data) =>
+            {
+                log4j.Info("OnResponseAdd: " + data.Result);
+            });
+        }
 
         protected override string SerializeObject(object target)
         {

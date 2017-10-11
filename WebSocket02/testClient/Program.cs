@@ -35,14 +35,15 @@ namespace testClient
             {
                 log4j.Info("error", e.Exception);
             });
-            //websocket.MessageReceived += new EventHandler<WebSocket4Net.MessageReceivedEventArgs>((s, e) =>
+
+            //websocket.On<WebSocket.Data.ResponseAdd>(WebSocket.Data.Cmd.TcsCommand.ResponseAdd.ToString(), (e) =>
             //{
-            //    log4j.Info("received from server: " + e.Message);
+            //    log4j.Info("OnResponseAdd: " + e.Result);
             //});
-            websocket.On<WebSocket.Data.ResponseAdd>(WebSocket.Data.Cmd.TcsCommand.ResponseAdd.ToString(), (e) =>
-            {
-                log4j.Info("OnResponseAdd: " + e.Result);
-            });
+            //websocket.On<WebSocket.Data.ResponseAdd>(WebSocket.Data.Cmd.TcsCommand.ResponseAdd.ToString(), (s, e) =>
+            //{
+            //    log4j.Info("OnResponseAdd: " + e.Result);
+            //});
 
             websocket.Open();
             log4j.Info(websocket.State);
