@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace WebSocket.Client
 {
-    public class MyJsonWebSocket : JsonWebSocket
+    class MyJsonWebSocket : JsonWebSocket
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -59,22 +59,45 @@ namespace WebSocket.Client
         {
             On<Data.ResponseAdd>(Data.Cmd.TcsCommand.ResponseAdd.ToString(), (data) =>
             {
-                log4j.Info("OnResponseAdd: " + data.Result);
+                // when received data ResponseAdd from server
+                //log4j.Info("OnResponseAdd: " + data.Result);
+                OnResponseAdd?.Invoke(data);
+            });
+
+            On<Data.ResponseEcho>(Data.Cmd.TcsCommand.ResponseEcho.ToString(), (data) =>
+            {
+                OnResponseEcho?.Invoke(data);
             });
         }
 
         protected override string SerializeObject(object target)
         {
-            log4j.Info("serialize");
+            //log4j.Info("serialize");
             return Newtonsoft.Json.JsonConvert.SerializeObject(target);
         }
         protected override object DeserializeObject(string json, Type type)
         {
-            log4j.Info("deserialize");
+            //log4j.Info("deserialize");
             return Newtonsoft.Json.JsonConvert.DeserializeObject(json, type);
         }
 
-        public void RequestAdd(int timeOutMilliSec, params int[] param)
+        public delegate void ResponseEchoHandler(Data.ResponseEcho responseEcho);
+        public event ResponseEchoHandler OnResponseEcho;
+
+        public void RequestEcho(string message)
+        {
+            Data.RequestEcho requestEcho = new Data.RequestEcho {
+                UUID = Guid.NewGuid().ToString(),
+                Message = message
+            };
+            Send(Data.Cmd.TcsCommand.RequestEcho.ToString(), requestEcho);
+        }
+
+
+        protected delegate void ResponseAddHandler(WebSocket.Data.ResponseAdd responseAdd);
+        protected event ResponseAddHandler OnResponseAdd;
+
+        public WebSocket.Data.ResponseAdd RequestAdd(int timeOutMilliSec, params int[] param)
         {
             Data.RequestAdd requestAdd = new Data.RequestAdd { UUID = Guid.NewGuid().ToString() };
             foreach (int p in param)
@@ -82,40 +105,41 @@ namespace WebSocket.Client
                 requestAdd.Param.Add(p);
             }
 
-            Send(Data.Cmd.TcsCommand.RequestAdd.ToString(), requestAdd);
+            //Send(Data.Cmd.TcsCommand.RequestAdd.ToString(), requestAdd);
 
-            //// set a timeout on this call to server!
-            //// if we do not hv this timeout, calling this RequestAdd method will forever waiting if server never response!
-            //TaskCompletionSource<Data.ResponseAdd> tcs = new TaskCompletionSource<Data.ResponseAdd>();
-            //CancellationTokenSource ct = new CancellationTokenSource(timeOutMilliSec);
+            // set a timeout on this call to server!
+            // if we do not hv this timeout, calling this RequestAdd method will forever waiting if server never response!
+            TaskCompletionSource<Data.ResponseAdd> tcs = new TaskCompletionSource<Data.ResponseAdd>();
+            CancellationTokenSource ct = new CancellationTokenSource(timeOutMilliSec);
 
-            //ResponseAddHandler rah = ((rpAdd) =>
-            //{
-            //    // only want the response UUID which is same as what we send
-            //    if (rpAdd.UUID == requestAdd.UUID)
-            //    {
-            //        tcs.TrySetResult(rpAdd);
-            //    }
-            //});
+            ResponseAddHandler rah = ((rpAdd) =>
+            {
+                // only want the response UUID which is same as what we send
+                if (rpAdd.UUID == requestAdd.UUID)
+                {
+                    tcs.TrySetResult(rpAdd);
+                }
+            });
 
-            //// when timeout occur, set Exception to TaskCompletionSource
-            //// also remove the callback from eventhandler
-            //ct.Token.Register(() =>
-            //{
-            //    OnResponseAdd -= rah;
-            //    tcs.TrySetException(new TimeoutException("TimeOut " + timeOutMilliSec));
-            //}, useSynchronizationContext: false);
+            // when timeout occur, set Exception to TaskCompletionSource
+            // also remove the callback from eventhandler
+            ct.Token.Register(() =>
+            {
+                OnResponseAdd -= rah;
+                tcs.TrySetException(new TimeoutException("TimeOut " + timeOutMilliSec));
+            }, useSynchronizationContext: false);
 
-            //OnResponseAdd += rah;   //hook to the eventHandler
-            ////string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
-            //string sendCmd = Cmd.TcsCommand.RequestAdd.ToString() + " " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
+            OnResponseAdd += rah;   //hook to the eventHandler
+            //string sendCmd = "RequestAdd " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
+            //string sendCmd = WebSocket.Data.Cmd.TcsCommand.RequestAdd.ToString() + " " + Newtonsoft.Json.JsonConvert.SerializeObject(requestAdd) + "\r\n";
             //base.Send(Encoding.UTF8.GetBytes(sendCmd));
+            Send(WebSocket.Data.Cmd.TcsCommand.RequestAdd.ToString(), requestAdd);
 
-            //tcs.Task.Wait();
-            //ResponseAdd responseAdd = tcs.Task.Result;
-            //OnResponseAdd -= rah;   //after received our response, unhook it. we only expecting 1 response.
+            tcs.Task.Wait();
+            WebSocket.Data.ResponseAdd responseAdd = tcs.Task.Result;
+            OnResponseAdd -= rah;   //after received our response, unhook it. we only expecting 1 response.
 
-            //return responseAdd;
+            return responseAdd;
         }
     }
 }

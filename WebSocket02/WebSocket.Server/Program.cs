@@ -51,7 +51,10 @@ namespace WebSocket.Server
             {
                 log4j.Info("client connected: " + s.SessionID);
             });
-
+            appServer.SessionClosed += new SessionHandler<JsonWebSocketSession, CloseReason>((session, closeReason) =>
+            {
+                log4j.Info("client closed: " + session.SessionID + ", reason: " + closeReason.ToString());
+            });
             //appServer.NewMessageReceived += new SessionHandler<JsonWebSocketSession, string>((s, message) =>
             //{
             //    log4j.Info("message: " + message);
@@ -74,10 +77,19 @@ namespace WebSocket.Server
 
             while (cmd != "q")
             {
-                if (cmd == "1") {
+                
+
+                string[] scmds = cmd.Split(' ');
+                if (scmds[0] == "1") {
                     foreach (var session in appServer.GetAllSessions())
                     {
-                        session.Send("test 1");
+                        //session.Send("test 1");
+                        if (scmds.Length >= 2 && scmds[1] != string.Empty)
+                        {
+                            string msg = cmd.Substring(cmd.IndexOf(" ")).Trim();
+                            Data.ResponseEcho responseEcho = new Data.ResponseEcho { UUID = Guid.NewGuid().ToString(), Message = msg };
+                            session.SendJsonMessage(Data.Cmd.TcsCommand.ResponseEcho.ToString(), responseEcho);
+                        }
                     }
                 }
                 cmd = Console.ReadLine();

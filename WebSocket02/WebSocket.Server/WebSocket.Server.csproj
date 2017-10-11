@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\RequestAdd.cs" />
+    <Compile Include="Command\RequestEcho.cs" />
     <Compile Include="MyAppServer.cs" />
     <Compile Include="MyAppSession.cs" />
     <Compile Include="Program.cs" />

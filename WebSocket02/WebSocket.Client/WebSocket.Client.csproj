@@ -53,14 +53,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command\ResponseAdd.cs" />
     <Compile Include="MyJsonWebSocket.cs" />
+    <Compile Include="MyWebSocketClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IClient\IClient.csproj">
+      <Project>{5622cf23-c144-435b-b364-4ee6c89d7e8c}</Project>
+      <Name>IClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebSocket.Data\WebSocket.Data.csproj">
       <Project>{a76b52d4-dd07-42c7-b1b7-ebbb5f5d277b}</Project>
       <Name>WebSocket.Data</Name>

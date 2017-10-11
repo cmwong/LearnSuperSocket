@@ -63,6 +63,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IClient\IClient.csproj">
+      <Project>{5622cf23-c144-435b-b364-4ee6c89d7e8c}</Project>
+      <Name>IClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebSocket.Client\WebSocket.Client.csproj">
       <Project>{d111b854-8a7a-43da-bb29-8cc696f9e9fe}</Project>
       <Name>WebSocket.Client</Name>
