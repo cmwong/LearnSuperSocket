@@ -71,25 +71,6 @@ namespace SocketClient
             //th.Start();
             sendAliveTimer.Start();
         }
-        //protected void SendAlive()
-        //{
-        //    // send a time Ticks to the server
-        //    while (IsConnected)
-        //    {
-        //        long tick = DateTime.Now.Ticks;
-        //        //byte[] datas = BitConverter.GetBytes(tick);
-        //        byte[] datas = Encoding.UTF8.GetBytes(tick.ToString());
-        //        try
-        //        {
-        //            Send(0, 1, datas);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            log4j.Error("Send error", ex);
-        //        }
-        //        Thread.Sleep(20000);
-        //    }
-        //}
         public bool Send(ushort mainCmd, ushort subCmd, string dataText)
         {
             byte[] datas = Encoding.UTF8.GetBytes(dataText);
