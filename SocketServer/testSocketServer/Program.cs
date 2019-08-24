@@ -11,7 +11,15 @@ namespace testSocketServer
         static void Main(string[] args)
         {
             SocketServer.EventServer appServer = new SocketServer.EventServer();
-            if(!appServer.Setup(8800))
+
+            SuperSocket.SocketBase.Config.ServerConfig serverConfig = new SuperSocket.SocketBase.Config.ServerConfig
+            {
+                Port = 8800,
+                MaxRequestLength = 2001,
+
+            };
+
+            if (!appServer.Setup(serverConfig))
             {
                 Console.WriteLine("Failed to setup");
                 return;

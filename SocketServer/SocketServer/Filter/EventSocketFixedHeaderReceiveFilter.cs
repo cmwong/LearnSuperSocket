@@ -22,7 +22,7 @@ namespace SocketServer.Filter
             int val4 = BitConverter.ToUInt16(header, offset + 6);
             dataSize = dataSize - this.Size;
             // if (dataSize > 2000 || val1 != 17408)
-            if(dataSize > 2000)
+            if (dataSize > 2000)
             {
                 //log4j.Debug("val > 2000 : " + val);
                 //log4j.Debug("incorrect header 17408 or size > 2000");
@@ -42,7 +42,8 @@ namespace SocketServer.Filter
                 int subKey = BitConverter.ToUInt16(header.Array, header.Offset + 6);
                 string body = Encoding.UTF8.GetString(bodyBuffer, offset, length);
                 ev = new EventPackageInfo(key, subKey, body);
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 log4j.Error("ResolvePackage: ", ex);
             }
