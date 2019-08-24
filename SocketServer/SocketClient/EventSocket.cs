@@ -82,14 +82,10 @@ namespace SocketClient
             bool val = false;
             if (!IsConnected)
                 return val;
-            if (datas.Length > 2000)
-            {
-                log4j.Debug("data too long");
-                return val;
-            }
+
 
             byte[] cmd1 = BitConverter.GetBytes((ushort)17408);
-            byte[] cmd2 = new byte[2];
+            byte[] dataSize = new byte[2];
             byte[] cmd3 = BitConverter.GetBytes(mainCmd);
             byte[] cmd4 = BitConverter.GetBytes(subCmd);
 
@@ -97,11 +93,21 @@ namespace SocketClient
             //log4j.Info("cmd3: " + BitConverter.ToString(cmd3));
             //log4j.Info("cmd4: " + BitConverter.ToString(cmd4));
 
-            byte[] sendData = cmd1.Concat(cmd2).Concat(cmd3).Concat(cmd4).Concat(datas).ToArray();
-            cmd2 = BitConverter.GetBytes((ushort)sendData.Length);
+            byte[] sendData = cmd1.Concat(dataSize).Concat(cmd3).Concat(cmd4).Concat(datas).ToArray();
+            dataSize = BitConverter.GetBytes((ushort)sendData.Length);      // dataSize is including the headerSize (8bytes)
             //log4j.Info("cmd2: " + BitConverter.ToString(cmd2));
-            sendData[2] = cmd2[0];
-            sendData[3] = cmd2[1];
+            sendData[2] = dataSize[0];
+            sendData[3] = dataSize[1];
+
+            // 20190824
+            // EasyClient do not provide setting MaxRequestLength
+            // fixme
+            // should we include this?
+            //if (datas.Length > 2000)
+            //{
+            //    log4j.Debug("data too long");
+            //    return val;
+            //}
 
             ArraySegment<byte> segment = new ArraySegment<byte>(sendData);
             Send(segment);

@@ -15,7 +15,7 @@ namespace testSocketServer
             SuperSocket.SocketBase.Config.ServerConfig serverConfig = new SuperSocket.SocketBase.Config.ServerConfig
             {
                 Port = 8800,
-                MaxRequestLength = 2001,
+                MaxRequestLength = 1024,
 
             };
 

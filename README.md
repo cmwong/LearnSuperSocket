@@ -24,8 +24,8 @@ Learn [SuperSocket](https://github.com/kerryjiang/SuperSocket) and [SuperSocket.
 
 ### SocketServer
 * Implement custom FixedHeader protocol on both server and client
-###### FixedHeader 8 bytes into 4 uint16
-###### 1st value = ?
-###### 2nd value = body length
-###### 3rd value = mainKey
-###### 4th value = subKey
+> FixedHeader 8 bytes into 4 uint16
+> 1st value = ?
+> 2nd value = body length
+> 3rd value = mainKey
+> 4th value = subKey

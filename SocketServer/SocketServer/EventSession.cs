@@ -24,6 +24,47 @@ namespace SocketServer
         protected override void HandleUnknownRequest(EventPackageInfo requestInfo)
         {
             log4j.Info($"unknow request k: {requestInfo.MainKey}, sk: {requestInfo.SubKey}, b: {requestInfo.Body}");
+            
+        }
+
+        public bool Send(ushort mainCmd, ushort subCmd, string dataText)
+        {
+            byte[] datas = Encoding.UTF8.GetBytes(dataText);
+
+            return Send(mainCmd, subCmd, datas);
+        }
+
+        public bool Send(ushort mainCmd, ushort subCmd, byte[] datas)
+        {
+            bool val = false;
+            if (!Connected)
+                return val;
+
+            byte[] cmd1 = BitConverter.GetBytes((ushort)17408);
+            byte[] dataSize = new byte[2];
+            byte[] cmd3 = BitConverter.GetBytes(mainCmd);
+            byte[] cmd4 = BitConverter.GetBytes(subCmd);
+
+            //log4j.Info("cmd1: " + BitConverter.ToString(cmd1));
+            //log4j.Info("cmd3: " + BitConverter.ToString(cmd3));
+            //log4j.Info("cmd4: " + BitConverter.ToString(cmd4));
+
+            byte[] sendData = cmd1.Concat(dataSize).Concat(cmd3).Concat(cmd4).Concat(datas).ToArray();
+            dataSize = BitConverter.GetBytes((ushort)sendData.Length);
+            sendData[2] = dataSize[0];
+            sendData[3] = dataSize[1];
+
+            if (datas.Length > AppServer.Config.MaxRequestLength)
+            {
+                log4j.Debug("data too long");
+                return val;
+            }
+
+            ArraySegment<byte> segment = new ArraySegment<byte>(sendData);
+            Send(segment);
+            val = true;
+
+            return val;
         }
     }
 }

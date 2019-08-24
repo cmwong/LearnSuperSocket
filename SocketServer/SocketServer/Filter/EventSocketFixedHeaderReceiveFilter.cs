@@ -17,18 +17,20 @@ namespace SocketServer.Filter
         protected override int GetBodyLengthFromHeader(byte[] header, int offset, int length)
         {
             int val1 = BitConverter.ToUInt16(header, offset);
-            int dataSize = BitConverter.ToUInt16(header, offset + 2);
+            int dataSize = BitConverter.ToUInt16(header, offset + 2);   // this size is including header size
             int val3 = BitConverter.ToUInt16(header, offset + 4);
             int val4 = BitConverter.ToUInt16(header, offset + 6);
-            dataSize = dataSize - this.Size;
-            // if (dataSize > 2000 || val1 != 17408)
-            if (dataSize > 2000)
-            {
-                //log4j.Debug("val > 2000 : " + val);
-                //log4j.Debug("incorrect header 17408 or size > 2000");
-                log4j.Debug("dataSize > 2000");
-                dataSize = 0;
-            }
+            dataSize = dataSize - this.Size;        // body size is exclude header size
+            // 20190824
+            // do not limit the size, let the server handle the size limit.
+            // appServer configure with MaxRequestLength
+            //if (dataSize > 2000)
+            //{
+            //    //log4j.Debug("val > 2000 : " + val);
+            //    //log4j.Debug("incorrect header 17408 or size > 2000");
+            //    log4j.Debug("dataSize > 2000");
+            //    dataSize = 0;
+            //}
             return dataSize;
         }
 
