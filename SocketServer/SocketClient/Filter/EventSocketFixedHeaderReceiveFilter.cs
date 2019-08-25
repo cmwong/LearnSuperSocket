@@ -32,8 +32,6 @@ namespace SocketClient.Filter
             {
                 int key = bufferStream.Skip(4).ReadUInt16(true);    // why read little indian??
                 int subKey = bufferStream.ReadUInt16(true);
-                //int key = bufferStream.Skip(4).ReadUInt16();
-                //int subKey = bufferStream.ReadUInt16();
 
                 //log4j.Debug(string.Format("key: {0}, subKey: {1}", key, subKey));
 
@@ -49,25 +47,19 @@ namespace SocketClient.Filter
 
         protected override int GetBodyLengthFromHeader(IBufferStream bufferStream, int length)
         {
-            //log4j.Debug("bufferStream.Length: " + bufferStream.Length);
-            //bufferStream.Skip(2);
             int val1 = bufferStream.ReadUInt16(true);
             int dataSize = bufferStream.ReadUInt16(true);
-            int val3 = bufferStream.ReadUInt16(true);
-            int val4 = bufferStream.ReadUInt16(true);
+            // int val3 = bufferStream.ReadUInt16(true);
+            // int val4 = bufferStream.ReadUInt16(true);
 
-            // log4j.Debug(string.Format("1: {0}, size: {1}, mainCmd: {2}, subCmd: {3}", val1, dataSize, val3, val4));
-            //1: 17408, size: 58, mainCmd: 3, subCmd: 13
-
-            //int val = bufferStream.Skip(2).ReadUInt16(true);
             dataSize = dataSize - this.HeaderSize;
             //log4j.Debug("val: " + val);
-            if (dataSize > 2000 || val1 != 17408)
-            {
-                //log4j.Debug("val > 2000 : " + val);
-                log4j.Debug("incorrect header 17408 or size > 2000");
-                dataSize = 0;
-            }
+            //if (dataSize > 2000 || val1 != 17408)
+            //{
+            //    //log4j.Debug("val > 2000 : " + val);
+            //    log4j.Debug("incorrect header 17408 or size > 2000");
+            //    dataSize = 0;
+            //}
             return dataSize;
         }
     }

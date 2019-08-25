@@ -28,19 +28,42 @@ namespace testSocketClient
             {
                 return;
             }
-            ushort max = ushort.MaxValue;
-            string body = "0";
-            for (ushort i = 0; i < max; i++)
+            //ushort max = ushort.MaxValue;
+            //string body = "0";
+            //for (ushort i = 0; i < max; i++)
+            //{
+            //    body = body + i.ToString();
+            //    eventSocket.Send(1, i, body);
+            //}
+            //Console.WriteLine("finish for loop");
+            string input = Console.ReadLine();
+            while(input != "q")
             {
-                body = body + i.ToString();
-                eventSocket.Send(1, i, body);
-            }
-            Console.WriteLine("finish for loop");
+                switch(input)
+                {
+                    case "1":
+                        TestSendAlot(eventSocket);
+                        break;
+                }
 
-            Console.ReadLine();
+                input = Console.ReadLine();
+            }
         }
 
+        private static void TestSendAlot(SocketClient.EventSocket eventSocket)
+        {
+            ushort key = 1;
+            ushort subKey = 255;
+            string data = "this is some text 爸爸 ";
+            int count = 10000;
 
+            log4j.Info("TestSendAlot " + count);
+            for(int i = 0; i < count; i++)
+            {
+                eventSocket.Send(key, subKey, data + ": " + i);
+            }
+            log4j.Info("finish");
+        }
 
 
         private static void EventSocket_Closed(object sender, EventArgs e)

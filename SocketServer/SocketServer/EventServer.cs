@@ -27,5 +27,24 @@ namespace SocketServer
         {
             log4j.Info($"sID: {session.SessionID}, k: {requestInfo.MainKey}, sk: {requestInfo.SubKey}, b: {requestInfo.Body}");
         }
+
+        public void TestSendAlot()
+        {
+            ushort key = 1;
+            ushort subKey = 255;
+            string data = "this is some text 哈哈 ";
+            int count = 10000;
+
+            log4j.Info("TestSendAlot " + count);
+            for (int i = 0; i < count; i++)
+            {
+                foreach (EventSession eventSession in GetAllSessions())
+                {
+                    eventSession.Send(key, subKey, data + ": " + i);
+                }
+            }
+            log4j.Info("finish");
+
+        }
     }
 }

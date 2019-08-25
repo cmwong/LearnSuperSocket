@@ -16,11 +16,12 @@ namespace SocketServer.Filter
 
         protected override int GetBodyLengthFromHeader(byte[] header, int offset, int length)
         {
-            int val1 = BitConverter.ToUInt16(header, offset);
+            // int val1 = BitConverter.ToUInt16(header, offset);
             int dataSize = BitConverter.ToUInt16(header, offset + 2);   // this size is including header size
-            int val3 = BitConverter.ToUInt16(header, offset + 4);
-            int val4 = BitConverter.ToUInt16(header, offset + 6);
+            // int val3 = BitConverter.ToUInt16(header, offset + 4);
+            // int val4 = BitConverter.ToUInt16(header, offset + 6);
             dataSize = dataSize - this.Size;        // body size is exclude header size
+
             // 20190824
             // do not limit the size, let the server handle the size limit.
             // appServer configure with MaxRequestLength
