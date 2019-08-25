@@ -37,6 +37,8 @@ namespace SocketServer.Filter.Tests
         [TestMethod()]
         public void TestGetBodyLengthFromHeaderTest2()
         {
+            // https://code.msdn.microsoft.com/Unit-Testing-Private-01117912
+
             byte[] cmd1 = BitConverter.GetBytes((ushort)17408);
             byte[] dataSize = new byte[2];
             byte[] cmd3 = BitConverter.GetBytes((ushort)1);

@@ -1,4 +1,5 @@
-# Implement custom FixedHeader 
+# Implement custom FixedHeader
+
 > FixedHeader 8 bytes into 4 uint16
 > 1st value = ?
 > 2nd value = body length
