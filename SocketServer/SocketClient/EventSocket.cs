@@ -111,9 +111,8 @@ namespace SocketClient
 
             ArraySegment<byte> segment = new ArraySegment<byte>(sendData);
             Send(segment);
-            val = true;
 
-            return val;
+            return true;
         }
         //public bool Connect()
         //{
