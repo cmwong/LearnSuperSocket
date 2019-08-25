@@ -51,5 +51,10 @@ namespace SocketServer.Filter
             }
             return ev;
         }
+
+        //public int TestGetBodyLengthFromHeader(byte[] header, int offset, int length)
+        //{
+        //    return GetBodyLengthFromHeader(header, offset, length);
+        //}
     }
 }
