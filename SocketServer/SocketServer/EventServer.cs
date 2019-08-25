@@ -26,6 +26,13 @@ namespace SocketServer
         private void EventServer_NewRequestReceived(EventSession session, EventPackageInfo requestInfo)
         {
             log4j.Info($"sID: {session.SessionID}, k: {requestInfo.MainKey}, sk: {requestInfo.SubKey}, b: {requestInfo.Body}");
+            if (requestInfo.MainKey == 1 && requestInfo.SubKey == 2)
+            {
+                Task.Run(() =>
+                {
+                    TestSendAlot(session);
+                });
+            }
         }
 
         public void TestSendAlot()
@@ -45,6 +52,21 @@ namespace SocketServer
             }
             log4j.Info("finish");
 
+        }
+
+        private void TestSendAlot(EventSession session)
+        {
+            ushort key = 1;
+            ushort subKey = 255;
+            string data = "only send to single client 哈哈 ";
+            int count = 10000;
+
+            log4j.Info("TestSendAlot " + count);
+            for (int i = 0; i < count; i++)
+            {
+                session.Send(key, subKey, data + ": " + i);
+            }
+            log4j.Info("finish");
         }
     }
 }

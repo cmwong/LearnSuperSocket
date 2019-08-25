@@ -44,6 +44,9 @@ namespace testSocketClient
                     case "1":
                         TestSendAlot(eventSocket);
                         break;
+                    case "2":
+                        Send_1_2(eventSocket);
+                        break;
                 }
 
                 input = Console.ReadLine();
@@ -64,7 +67,10 @@ namespace testSocketClient
             }
             log4j.Info("finish");
         }
-
+        private static void Send_1_2(SocketClient.EventSocket eventSocket)
+        {
+            eventSocket.Send(1, 2, "rubbish");
+        }
 
         private static void EventSocket_Closed(object sender, EventArgs e)
         {
