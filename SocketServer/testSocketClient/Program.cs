@@ -84,10 +84,9 @@ namespace testSocketClient
 
         private static void EventSocket_Connected(object sender, EventArgs e)
         {
-            log4j.Info("connected. " + sender.ToString());
             SocketClient.EventSocket eventSocket = (SocketClient.EventSocket)sender;
-
-            eventSocket.Send(1, 1, "1_1");
+            log4j.Info("connected.");
+            // eventSocket.Send(1, 1, "1_1");
         }
 
         private static void EventSocket_NewPackageReceived(object sender, SuperSocket.ClientEngine.PackageEventArgs<SocketClient.PackageInfo.EventPackageInfo> e)
