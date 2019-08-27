@@ -6,7 +6,7 @@ use std::{thread, time};
 
 use byteorder::{BigEndian, LittleEndian, ByteOrder, WriteBytesExt};
 
-static NTHREADS: i32 = 1;
+static NTHREADS: i32 = 2;
 
 fn main() {
   for i in 0..NTHREADS {

@@ -69,7 +69,9 @@ namespace testSocketClient
         }
         private static void Send_1_2(SocketClient.EventSocket eventSocket)
         {
+            log4j.Info("sending 1_2");
             eventSocket.Send(1, 2, "rubbish");
+            log4j.Info("finish sending 1_2");
         }
 
         private static void EventSocket_Closed(object sender, EventArgs e)

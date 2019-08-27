@@ -1,7 +1,7 @@
 extern crate byteorder;
 extern crate mio;
 extern crate slab;
-use std::io;
+// use std::io;
 
 #[macro_use]
 extern crate log;
