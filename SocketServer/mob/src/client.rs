@@ -26,7 +26,7 @@ fn main() {
 
         let mut buf = vec![];
         buf.write_u16::<LittleEndian>(0).unwrap();
-        buf.write_u16::<LittleEndian>(msg.len() as u16).unwrap();
+        buf.write_u16::<LittleEndian>((msg.len() + 8) as u16).unwrap();
         buf.write_u16::<LittleEndian>(0).unwrap();
         buf.write_u16::<LittleEndian>(0).unwrap();
 
@@ -38,7 +38,7 @@ fn main() {
         let _ = stream.read(&mut buf).unwrap();
 
         // let msg_len = BigEndian::read_u64(&buf);
-        let msg_len = LittleEndian::read_u16(&buf[2..4]);
+        let  msg_len = LittleEndian::read_u16(&buf[2..4]) - 8;
         println!("thread {}: Reading message length of {}", i, msg_len);
 
         let mut r = [0u8; 256];

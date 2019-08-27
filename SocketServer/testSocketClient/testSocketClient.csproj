@@ -97,6 +97,7 @@
     <None Include="App.config" />
     <None Include="Log.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

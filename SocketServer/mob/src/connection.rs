@@ -136,7 +136,7 @@ impl Connection {
         }
 
         // let msg_len = BigEndian::read_u64(buf.as_ref());
-        let msg_len2 = LittleEndian::read_u16(&buf[2..4]);
+        let msg_len2 = LittleEndian::read_u16(&buf[2..4]) - 8;
 
         // Ok(Some(msg_len))
         Ok(Some(msg_len2))
@@ -168,7 +168,7 @@ impl Connection {
             return Ok(Some(()));
         }
 
-        let len = buf.len();
+        let len = buf.len() + 8;
         // let mut send_buf = [0u8; 8];
         // // BigEndian::write_u64(&mut send_buf, len as u64);
 
