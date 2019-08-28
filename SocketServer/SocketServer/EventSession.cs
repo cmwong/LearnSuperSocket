@@ -61,11 +61,11 @@ namespace SocketServer
             }
 
             ArraySegment<byte> segment = new ArraySegment<byte>(sendData);
-            //Send(segment);
-            //val = true;
-            //return val;
+            Send(segment);
+            return true;
 
-            return TrySend(segment);
+            // 20190828 don't use TrySend. will hv missing message
+            // return TrySend(segment);
 
         }
     }

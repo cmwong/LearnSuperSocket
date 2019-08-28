@@ -224,9 +224,9 @@ impl Server {
       let rc_message = Rc::new(message);
       // Echo the message too all connected clients.
       for c in self.conns.iter_mut() {
-        // for _i in  0..10_000 {
+        for _i in  0..10_000 {
           c.send_message(rc_message.clone())?;
-        // }
+        }
       }
     }
 

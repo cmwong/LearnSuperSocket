@@ -70,7 +70,7 @@ namespace testSocketClient
         private static void Send_1_2(SocketClient.EventSocket eventSocket)
         {
             log4j.Info("sending 1_2");
-            eventSocket.Send(1, 2, "rubbish");
+            eventSocket.Send(1, 2, "this is some text 爸爸 ");
             log4j.Info("finish sending 1_2");
         }
 
