@@ -14,6 +14,8 @@ namespace testSAEASocket
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         IServerSokcet _server;
+        public event Action<MyPackage> OnReceived;
+
         public MyServer()
         {
             var option = SocketOptionBuilder.Instance.UseIocp(new MyContext())
@@ -25,12 +27,19 @@ namespace testSAEASocket
             _server.OnReceive += _server_OnReceive;
         }
 
-        private void _server_OnReceive(object currentObj, byte[] data)
+        private void _server_OnReceive(object userToken, byte[] data)
         {
-            IUserToken userToken = (IUserToken)currentObj;
-            string txt = Encoding.UTF8.GetString(data);
+            IUserToken ut = (IUserToken)userToken;
+            MyUnpacker up = (MyUnpacker)ut.Unpacker;
+            // log4j.Info("message length: " + BitConverter.ToUInt16(data, 2));
+            // string txt = Encoding.UTF8.GetString(data);
+            // log4j.Info(ut.ID + ", data: " + txt);
 
-            log4j.Info(userToken.ID + ", data: " + txt);
+            up.Unpack(data, (package) =>
+            {
+                // log4j.Info(Newtonsoft.Json.JsonConvert.SerializeObject(package));
+                OnReceived?.Invoke(package);
+            });
         }
 
         private void _server_OnAccepted(object obj)
@@ -40,7 +49,7 @@ namespace testSAEASocket
             log4j.Info(userToken.ID);
 
             // Send(userToken.ID, 2, 2, Encoding.UTF8.GetBytes("helo"));
-            TestSendAlot(userToken.ID);
+            // TestSendAlot(userToken.ID);
         }
 
         public void Start()

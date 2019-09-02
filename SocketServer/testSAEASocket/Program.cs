@@ -17,9 +17,15 @@ namespace testSAEASocket
             log4j.Info("start main");
 
             MyServer myServer = new MyServer();
+            myServer.OnReceived += MyServer_OnReceived;
             myServer.Start();
 
             Console.ReadLine();
+        }
+
+        private static void MyServer_OnReceived(MyPackage obj)
+        {
+            Console.WriteLine(obj.Body);
         }
     }
 }

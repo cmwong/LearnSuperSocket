@@ -8,10 +8,8 @@ namespace testSAEASocket
 {
     public class MyPackage
     {
-        public const int FixedHeaderLength = 8;     // 8 bytes
-
         public ushort CMD1 { get; set; }
-        public ushort DataSize { get; set; }
+        // public ushort DataSize { get; set; }
         public ushort MainKey { get; set; }
         public ushort SubKey { get; set; }
 
