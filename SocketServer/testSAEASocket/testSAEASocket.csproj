@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MyClient.cs" />
     <Compile Include="MyContext.cs" />
     <Compile Include="MyPackage.cs" />
     <Compile Include="MyServer.cs" />

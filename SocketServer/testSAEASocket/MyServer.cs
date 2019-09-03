@@ -49,7 +49,7 @@ namespace testSAEASocket
             log4j.Info(userToken.ID);
 
             // Send(userToken.ID, 2, 2, Encoding.UTF8.GetBytes("helo"));
-            // TestSendAlot(userToken.ID);
+            TestSendAlot(userToken.ID);
         }
 
         public void Start()
@@ -100,7 +100,7 @@ namespace testSAEASocket
             ushort key = 1;
             ushort subKey = 255;
             string data = "this is some text 哈哈 ";
-            int count = 10000;
+            int count = 6000;
 
             log4j.Info("TestSendAlot " + count);
             for (int i = 0; i < count; i++)

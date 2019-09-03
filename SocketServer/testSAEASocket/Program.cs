@@ -20,12 +20,23 @@ namespace testSAEASocket
             myServer.OnReceived += MyServer_OnReceived;
             myServer.Start();
 
+            MyClient myClient = new MyClient();
+            myClient.Connect();
+            if(!myClient.Connected)
+            {
+                log4j.Info("client not connected");
+            }
+           //  myClient.Send_1_2();
+
+
+
             Console.ReadLine();
         }
 
         private static void MyServer_OnReceived(MyPackage obj)
         {
-            Console.WriteLine(obj.Body);
+            //Console.WriteLine(obj.Body);
+            
         }
     }
 }
