@@ -16,6 +16,7 @@ namespace testSAEASocket
         IClientSocket _client;
         MyContext _myContext;
 
+        
         public MyClient()
         {
             _myContext = new MyContext();
