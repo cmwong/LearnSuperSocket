@@ -15,7 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocketServerTests", "Socket
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testSAEASocket", "testSAEASocket\testSAEASocket.csproj", "{2450E479-2DDD-49C6-B8F7-42ACD6A2C4CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAEASocket", "SAEASocket\SAEASocket.csproj", "{ABADAD59-F7EF-4A21-928B-07F87E379E64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SAEASocket", "SAEASocket\SAEASocket.csproj", "{ABADAD59-F7EF-4A21-928B-07F87E379E64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "testSAEASocket1", "testSAEASocket1\testSAEASocket1.csproj", "{065791B4-10EE-448A-8950-7291A6F4AC6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{ABADAD59-F7EF-4A21-928B-07F87E379E64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABADAD59-F7EF-4A21-928B-07F87E379E64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABADAD59-F7EF-4A21-928B-07F87E379E64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{065791B4-10EE-448A-8950-7291A6F4AC6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{065791B4-10EE-448A-8950-7291A6F4AC6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{065791B4-10EE-448A-8950-7291A6F4AC6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{065791B4-10EE-448A-8950-7291A6F4AC6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
