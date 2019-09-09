@@ -94,21 +94,6 @@ namespace SAEASocket.Custom
                 {
                     ProcessConnected(_connectArgs);
                 }
-                //else
-                //{
-                //    log4j.Info("_socket.connectAsync return false");
-                //    log4j.Info("socketError " + _connectArgs.SocketError);
-                //    log4j.Info("socketFlag " + _connectArgs.SocketFlags);
-                //    log4j.Info("connected " + _socket.Connected);
-                //    if (_socket.Connected)
-                //    {
-                //        ProcessConnected(_connectArgs);
-                //    }
-                //    else
-                //    {
-                //        OnDisconnected?.Invoke("", new SocketException((int)SocketError.HostDown));
-                //    }
-                //}
             }
         }
 

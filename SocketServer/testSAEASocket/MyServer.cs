@@ -37,7 +37,7 @@ namespace testSAEASocket
 
             up.Unpack(data, (package) =>
             {
-                // log4j.Info(Newtonsoft.Json.JsonConvert.SerializeObject(package));
+                log4j.Info(Newtonsoft.Json.JsonConvert.SerializeObject(package));
                 OnReceived?.Invoke(package);
             });
         }
@@ -49,7 +49,7 @@ namespace testSAEASocket
             log4j.Info(userToken.ID);
 
             // Send(userToken.ID, 2, 2, Encoding.UTF8.GetBytes("helo"));
-            // TestSendAlot(userToken.ID);
+            TestSendAlot(userToken.ID);
         }
 
         public void Start()

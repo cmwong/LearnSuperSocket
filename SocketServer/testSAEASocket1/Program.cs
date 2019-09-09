@@ -18,11 +18,22 @@ namespace testSAEASocket1
 
             SAEASocket.EventSocketClient eventSocketClient = new SAEASocket.EventSocketClient("127.0.0.1", 8800);
             eventSocketClient.OnError += EventSocketClient_OnError;
-
+            eventSocketClient.OnDisconnected += EventSocketClient_OnDisconnected;
+            eventSocketClient.OnNewPackageReceived += EventSocketClient_OnNewPackageReceived;
             eventSocketClient.ConnectAsync();
 
             Console.WriteLine("console waiting input");
             string input = Console.ReadLine();
+        }
+
+        private static void EventSocketClient_OnNewPackageReceived(object sender, SAEASocket.Custom.Package e)
+        {
+            log4j.Info(e.Body);
+        }
+
+        private static void EventSocketClient_OnDisconnected(string ID, Exception ex)
+        {
+            log4j.Info(ID, ex);
         }
 
         private static void EventSocketClient_OnError(string ID, Exception ex)
