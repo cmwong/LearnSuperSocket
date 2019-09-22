@@ -6,6 +6,13 @@ using SAEA.Sockets.Interface;
 
 namespace SAEASocket.Custom
 {
+    /// <summary>
+    /// Header size is 8 bytes, store 4 data (each data is 2 byte(ushort))
+    /// CMD1        ushort
+    /// DataSize    ushort
+    /// MainCmd     ushort
+    /// SubCmd      ushort
+    /// </summary>
     class Unpacker : IUnpacker
     {
         public const int HeaderSize = 8;
@@ -40,8 +47,8 @@ namespace SAEASocket.Custom
         }
         private int GetLength(byte[] data)
         {
+            // the size store in the header is icluding the header size
             int dataSize = BitConverter.ToUInt16(data, 2);
-            // dataSize = dataSize - HeaderSize;
 
             return dataSize;
         }

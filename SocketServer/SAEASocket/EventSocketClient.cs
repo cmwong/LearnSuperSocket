@@ -16,8 +16,8 @@ namespace SAEASocket
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        IClientSocket _client;
-        Context _myContext;
+        protected IClientSocket _client;
+        protected Context _myContext;
 
         public event EventHandler<Package> OnNewPackageReceived;
         public event OnErrorHandler OnError;
@@ -26,7 +26,7 @@ namespace SAEASocket
 
         private System.Timers.Timer sendAliveTimer;
 
-        public bool Connected { get { return _client.Connected; } }
+        public bool IsConnected { get { return _client.Connected; } }
 
         public EventSocketClient(string ipAddress, int port)
         {
@@ -50,20 +50,19 @@ namespace SAEASocket
 
         public void ConnectAsync()
         {
-            _client.ConnectAsync((e) =>
+            _client.ConnectAsync((Action<SocketError>)((e) =>
             {
                 log4j.Info("in callback of SocketError, " + e);
                 switch (e)
                 {
                     case SocketError.Success:
-                        OnConnected?.Invoke();
-                        sendAliveTimer.Start();
+                        _client_OnConnected();
                         break;
                     default:
                         OnDisconnected?.Invoke("", new SocketException((int)e));
                         break;
                 }
-            });
+            }));
         }
         //public void Connect()
         //{
@@ -100,6 +99,12 @@ namespace SAEASocket
             });
         }
 
+        private void _client_OnConnected()
+        {
+            OnConnected?.Invoke();
+            sendAliveTimer.Start();
+        }
+
         private void SendAliveTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             long tick = DateTime.Now.Ticks;
@@ -108,7 +113,7 @@ namespace SAEASocket
             try
             {
                 log4j.Info("sendAlive: " + tick);
-                Send(0, 1, datas);
+                SendAsync(0, 1, datas);
             }
             catch (Exception ex)
             {
@@ -118,31 +123,38 @@ namespace SAEASocket
 
         public bool Send(ushort mainCmd, ushort subCmd, byte[] datas)
         {
-            //bool val = false;
-            //if (!Connected)
-            //    return val;
+            bool val = false;
+            if (!IsConnected)
+            {
+                return val;
+            }
 
-            byte[] cmd1 = BitConverter.GetBytes((ushort)17408);
-            byte[] dataSize = new byte[2];
-            byte[] cmd3 = BitConverter.GetBytes(mainCmd);
-            byte[] cmd4 = BitConverter.GetBytes(subCmd);
+            //byte[] sendData = MessageToByteArray(mainCmd, subCmd, datas);
+            byte[] sendData = Package.ToArray(17408, mainCmd, subCmd, datas);
 
-            //log4j.Info("cmd1: " + BitConverter.ToString(cmd1));
-            //log4j.Info("cmd3: " + BitConverter.ToString(cmd3));
-            //log4j.Info("cmd4: " + BitConverter.ToString(cmd4));
+            _client.Send(sendData);
+            return true;
+        }
+        public bool Send(Package package)
+        {
+            bool val = false;
+            if (!IsConnected)
+            {
+                return val;
+            }
 
-            byte[] sendData = cmd1.Concat(dataSize).Concat(cmd3).Concat(cmd4).Concat(datas).ToArray();
-            dataSize = BitConverter.GetBytes((ushort)sendData.Length);
-            sendData[2] = dataSize[0];
-            sendData[3] = dataSize[1];
-
-            _client.SendAsync(sendData);
+            _client.Send(package.ToArray());
             return true;
         }
 
-        public bool Send(Package package)
+        public void SendAsync(ushort mainCmd, ushort subCmd, byte[] datas)
         {
-            return Send(package.MainKey, package.SubKey, Encoding.UTF8.GetBytes(package.Body));
+            _client.SendAsync(Package.ToArray(17408, mainCmd, subCmd, datas));
+        }
+
+        public void SendAsync(Package package)
+        {
+            _client.SendAsync(package.ToArray());
         }
     }
 }

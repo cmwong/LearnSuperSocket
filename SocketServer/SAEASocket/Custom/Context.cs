@@ -7,7 +7,7 @@ using SAEA.Sockets.Interface;
 
 namespace SAEASocket.Custom
 {
-    class Context : IContext
+    public class Context : IContext
     {
         public IUserToken UserToken { get; set; }
         public IUnpacker Unpacker { get; set; }
