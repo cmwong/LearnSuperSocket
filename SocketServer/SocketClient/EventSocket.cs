@@ -89,25 +89,11 @@ namespace SocketClient
             byte[] cmd3 = BitConverter.GetBytes(mainCmd);
             byte[] cmd4 = BitConverter.GetBytes(subCmd);
 
-            //log4j.Info("cmd1: " + BitConverter.ToString(cmd1));
-            //log4j.Info("cmd3: " + BitConverter.ToString(cmd3));
-            //log4j.Info("cmd4: " + BitConverter.ToString(cmd4));
-
             byte[] sendData = cmd1.Concat(dataSize).Concat(cmd3).Concat(cmd4).Concat(datas).ToArray();
             dataSize = BitConverter.GetBytes((ushort)sendData.Length);      // dataSize is including the headerSize (8bytes)
             //log4j.Info("cmd2: " + BitConverter.ToString(cmd2));
             sendData[2] = dataSize[0];
             sendData[3] = dataSize[1];
-
-            // 20190824
-            // EasyClient do not provide setting MaxRequestLength
-            // fixme
-            // should we include this?
-            //if (datas.Length > 2000)
-            //{
-            //    log4j.Debug("data too long");
-            //    return val;
-            //}
 
             ArraySegment<byte> segment = new ArraySegment<byte>(sendData);
             Send(segment);
