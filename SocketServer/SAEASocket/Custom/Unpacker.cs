@@ -15,7 +15,7 @@ namespace SAEASocket.Custom
     /// </summary>
     class Unpacker : IUnpacker
     {
-        public const int HeaderSize = 8;
+        public static int HeaderSize = 8;
         List<byte> _cache = new List<byte>();
         public void Clear()
         {

@@ -17,7 +17,7 @@ namespace SAEASocket
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         protected IClientSocket _client;
-        protected Context _myContext;
+        protected Context _context;
 
         public event EventHandler<Package> OnNewPackageReceived;
         public event OnErrorHandler OnError;
@@ -30,8 +30,8 @@ namespace SAEASocket
 
         public EventSocketClient(string ipAddress, int port)
         {
-            _myContext = new Context();
-            ISocketOption option = SocketOptionBuilder.Instance.UseIocp(_myContext)
+            _context = new Context();
+            ISocketOption option = SocketOptionBuilder.Instance.UseIocp(_context)
                 .SetIP(ipAddress)
                 .SetPort(port)
                 .Build();
@@ -42,7 +42,7 @@ namespace SAEASocket
             _client.OnError += _client_OnError;
             _client.OnDisconnected += _client_OnDisconnected;
 
-            sendAliveTimer = new System.Timers.Timer(15000);
+            sendAliveTimer = new System.Timers.Timer(30000);
             sendAliveTimer.Elapsed += SendAliveTimer_Elapsed;
             sendAliveTimer.AutoReset = true;
 
@@ -93,7 +93,7 @@ namespace SAEASocket
 
         private void _client_OnReceive(byte[] data)
         {
-            ((Unpacker)_myContext.Unpacker).Unpack(data, (package) =>
+            ((Unpacker)_context.Unpacker).Unpack(data, (package) =>
             {
                 OnNewPackageReceived?.Invoke(this, package);
             });

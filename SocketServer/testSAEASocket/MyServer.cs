@@ -37,7 +37,7 @@ namespace testSAEASocket
 
             up.Unpack(data, (package) =>
             {
-                log4j.Info(Newtonsoft.Json.JsonConvert.SerializeObject(package));
+                log4j.Info("sessionID: " + ut.ID + ", " + Newtonsoft.Json.JsonConvert.SerializeObject(package));
                 OnReceived?.Invoke(package);
             });
         }
