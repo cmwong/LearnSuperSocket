@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SAEA.Sockets.Interface;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Log.config", Watch = true)]
 
@@ -16,27 +18,25 @@ namespace testSAEASocket
         {
             log4j.Info("start main");
 
-            MyServer myServer = new MyServer();
-            myServer.OnReceived += MyServer_OnReceived;
+            SAEASocket.EventSocketServer myServer = new SAEASocket.EventSocketServer("127.0.0.1", 8800);
+            myServer.OnNewPackageReceived += MyServer_OnNewPackageReceived;
+            myServer.OnAccepted += MyServer_OnAccepted;
             myServer.Start();
-
-            //MyClient myClient = new MyClient();
-            //myClient.Connect();
-            //if(!myClient.Connected)
-            //{
-            //    log4j.Info("client not connected");
-            //}
-           //  myClient.Send_1_2();
-
-
 
             Console.ReadLine();
         }
 
-        private static void MyServer_OnReceived(MyPackage obj)
+        private static void MyServer_OnAccepted(object userToken)
         {
-            //Console.WriteLine(obj.Body);
-            
+            IUserToken ut = (IUserToken)userToken;
+            log4j.Info(ut.ID);
         }
+
+        private static void MyServer_OnNewPackageReceived(object userToken, SAEASocket.Custom.Package e)
+        {
+            IUserToken ut = (IUserToken)userToken;
+            log4j.Info(ut.ID + ", " + JsonConvert.SerializeObject(e));
+        }
+
     }
 }

@@ -13,7 +13,7 @@ namespace SAEASocket.Custom
     /// MainCmd     ushort
     /// SubCmd      ushort
     /// </summary>
-    class Unpacker : IUnpacker
+    public class Unpacker : IUnpacker
     {
         public static int HeaderSize = 8;
         List<byte> _cache = new List<byte>();

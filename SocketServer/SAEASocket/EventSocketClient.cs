@@ -50,7 +50,7 @@ namespace SAEASocket
 
         public void ConnectAsync()
         {
-            _client.ConnectAsync((Action<SocketError>)((e) =>
+            _client.ConnectAsync((e) =>
             {
                 log4j.Info("in callback of SocketError, " + e);
                 switch (e)
@@ -62,7 +62,7 @@ namespace SAEASocket
                         OnDisconnected?.Invoke("", new SocketException((int)e));
                         break;
                 }
-            }));
+            });
         }
         //public void Connect()
         //{

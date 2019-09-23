@@ -26,6 +26,7 @@ namespace SAEASocket
             ISocketOption option = SocketOptionBuilder.Instance.UseIocp(new Context())
                 .SetIP(ipAddress)
                 .SetPort(port)
+                .SetSocket(SAEA.Sockets.Model.SAEASocketType.Tcp)
                 .Build();
 
             _server = SocketFactory.CreateServerSocket(option);
@@ -39,23 +40,29 @@ namespace SAEASocket
         {
             IUserToken ut = (IUserToken)userToken;
             Unpacker up = (Unpacker)ut.Unpacker;
+            log4j.Info(ut.ID);
 
             up.Unpack(data, (package) =>
             {
-                log4j.Info("sessionID: " + ut.ID + ", " + Newtonsoft.Json.JsonConvert.SerializeObject(package));
+                //log4j.Info("sessionID: " + ut.ID + ", " + Newtonsoft.Json.JsonConvert.SerializeObject(package));
                 OnNewPackageReceived?.Invoke(userToken, package);
             });
         }
         private void _server_OnError(string ID, Exception ex)
         {
+            //log4j.Info(ID, ex);
             OnError?.Invoke(ID, ex);
         }
         private void _server_OnDisconnected(string ID, Exception ex)
         {
+            //log4j.Info(ID);
             OnDisconnected?.Invoke(ID, ex);
         }
         private void _server_OnAccepted(object userToken)
         {
+            //IUserToken ut = (IUserToken)userToken;
+            //log4j.Info(ut.ID);
+
             OnAccepted?.Invoke(userToken);
         }
 
