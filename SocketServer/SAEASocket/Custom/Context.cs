@@ -16,7 +16,7 @@ namespace SAEASocket.Custom
         {
             Unpacker unpacker = new Unpacker();
 
-            UserToken = new BaseUserToken();
+            UserToken = new UserToken();
             UserToken.Unpacker = unpacker;
             Unpacker = unpacker;
         }

@@ -21,7 +21,7 @@ namespace SAEASocket
 
         public event EventHandler<Package> OnNewPackageReceived;
         public event OnErrorHandler OnError;
-        public event OnDisconnectedHandler OnDisconnected;
+        public event SAEA.Sockets.Handler.OnDisconnectedHandler OnDisconnected;
         public event OnConnectedHandler OnConnected;
 
         private System.Timers.Timer sendAliveTimer;
@@ -37,7 +37,7 @@ namespace SAEASocket
                 .Build();
 
             // _client = SocketFactory.CreateClientSocket(option);
-            _client = new Client(option);
+            _client = new Core.Tcp.IocpClientSocket(option);
             _client.OnReceive += _client_OnReceive;
             _client.OnError += _client_OnError;
             _client.OnDisconnected += _client_OnDisconnected;

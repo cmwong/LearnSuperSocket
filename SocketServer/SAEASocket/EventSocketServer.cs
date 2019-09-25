@@ -17,9 +17,11 @@ namespace SAEASocket
         protected IServerSokcet _server;
 
         public event OnAcceptedHandler OnAccepted;
-        public event OnErrorHandler OnError;
-        public event OnDisconnectedHandler OnDisconnected;
+        public event Custom.OnErrorHandler OnError;
+        public event Custom.OnDisconnectedHandler OnDisconnected;
         public event EventHandler<Package> OnNewPackageReceived;
+
+        SessionIDToNumber SessionIDToNumber = new SessionIDToNumber();
 
         public EventSocketServer(string ipAddress, int port)
         {
@@ -48,20 +50,27 @@ namespace SAEASocket
                 OnNewPackageReceived?.Invoke(userToken, package);
             });
         }
-        private void _server_OnError(string ID, Exception ex)
+        private void _server_OnError(string sessionID, Exception ex)
         {
             //log4j.Info(ID, ex);
-            OnError?.Invoke(ID, ex);
+            ushort index = SessionIDToNumber.Get(sessionID);
+
+            OnError?.Invoke(sessionID, index, ex);
         }
-        private void _server_OnDisconnected(string ID, Exception ex)
+        private void _server_OnDisconnected(string sessionID, Exception ex)
         {
             //log4j.Info(ID);
-            OnDisconnected?.Invoke(ID, ex);
+            ushort index = SessionIDToNumber.Get(sessionID);
+            SessionIDToNumber.Remove(sessionID);
+
+            OnDisconnected?.Invoke(sessionID, index, ex);
         }
         private void _server_OnAccepted(object userToken)
         {
             //IUserToken ut = (IUserToken)userToken;
             //log4j.Info(ut.ID);
+            UserToken ut = (UserToken)userToken;
+            ut.Index = SessionIDToNumber.Add(ut.ID);
 
             OnAccepted?.Invoke(userToken);
         }

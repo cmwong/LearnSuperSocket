@@ -21,21 +21,33 @@ namespace testSAEASocket
             SAEASocket.EventSocketServer myServer = new SAEASocket.EventSocketServer("127.0.0.1", 8800);
             myServer.OnNewPackageReceived += MyServer_OnNewPackageReceived;
             myServer.OnAccepted += MyServer_OnAccepted;
+            myServer.OnDisconnected += MyServer_OnDisconnected;
+            myServer.OnError += MyServer_OnError;
             myServer.Start();
 
             Console.ReadLine();
         }
 
+        private static void MyServer_OnError(string sessionID, ushort index, Exception ex)
+        {
+            log4j.Info("sID: " + sessionID + ", index: " + index);
+        }
+
+        private static void MyServer_OnDisconnected(string sessionID, ushort index, Exception ex)
+        {
+            log4j.Info("sID: " + sessionID + ", index: " + index);
+        }
+
         private static void MyServer_OnAccepted(object userToken)
         {
-            IUserToken ut = (IUserToken)userToken;
-            log4j.Info(ut.ID);
+            SAEASocket.Custom.UserToken ut = (SAEASocket.Custom.UserToken)userToken;
+            log4j.Info("sID: " + ut.ID + ", index: " + ut.Index);
         }
 
         private static void MyServer_OnNewPackageReceived(object userToken, SAEASocket.Custom.Package e)
         {
-            IUserToken ut = (IUserToken)userToken;
-            log4j.Info(ut.ID + ", " + JsonConvert.SerializeObject(e));
+            SAEASocket.Custom.UserToken ut = (SAEASocket.Custom.UserToken)userToken;
+            log4j.Info("sID: " + ut.ID + ", index: " + ut.Index + ", " + JsonConvert.SerializeObject(e));
         }
 
     }

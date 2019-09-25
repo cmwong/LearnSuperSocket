@@ -14,9 +14,9 @@ using SAEA.Sockets.Handler;
 using SAEA.Sockets.Interface;
 using SAEA.Sockets.Model;
 
-namespace SAEASocket.Custom
+namespace SAEASocket.Core.Tcp
 {
-    class Client : IClientSocket, IDisposable
+    class IocpClientSocket : IClientSocket, IDisposable
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -57,7 +57,7 @@ namespace SAEASocket.Custom
         }
 
 
-        public Client(ISocketOption socketOption)
+        public IocpClientSocket(ISocketOption socketOption)
         {
             _SocketOption = socketOption;
 
