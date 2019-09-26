@@ -30,7 +30,7 @@ namespace SAEASocket
                 .SetIP(ipAddress)
                 .SetPort(port)
                 .SetSocket(SAEA.Sockets.Model.SAEASocketType.Tcp)
-                .SetCount(ushort.MaxValue + 1)
+                .SetCount(ushort.MaxValue)
                 .Build();
 
             _server = SocketFactory.CreateServerSocket(option);
