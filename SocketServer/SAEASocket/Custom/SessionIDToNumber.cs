@@ -15,8 +15,11 @@ namespace SAEASocket.Custom
     /// </summary>
     class SessionIDToNumber
     {
-        private ushort next = 0;
+        private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private ushort next = 1;
         private object tLock = new object();
+        private const int maxNumber = ushort.MaxValue;
 
         private ConcurrentDictionary<ushort, string> indexKeys = new ConcurrentDictionary<ushort, string>();
         private ConcurrentDictionary<string, ushort> sessionKeys = new ConcurrentDictionary<string, ushort>();
@@ -41,9 +44,9 @@ namespace SAEASocket.Custom
                 lock (tLock)
                 {
                     result = next++;
-                    if (next >= ushort.MaxValue && indexKeys.Keys.Count() >= ushort.MaxValue)
+                    if (next >= maxNumber && indexKeys.Keys.Count() >= maxNumber)
                     {
-                        throw new OverflowException("No more free number");
+                        throw new OverflowException("Exceed max connection");
                     }
                 }
             }
@@ -85,7 +88,11 @@ namespace SAEASocket.Custom
 
         public string Get(ushort index)
         {
-            indexKeys.TryGetValue(index, out string sessionID);
+            string sessionID;
+            if(!indexKeys.TryGetValue(index, out sessionID))
+            {
+                log4j.Info("cannot found index: " + index);
+            }
 
             return sessionID;
         }

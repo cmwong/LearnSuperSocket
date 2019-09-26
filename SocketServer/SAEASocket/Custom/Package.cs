@@ -14,9 +14,13 @@ namespace SAEASocket.Custom
 
         public byte[] ToArray()
         {
-            return ToArray(CMD1, MainKey, SubKey, Encoding.UTF8.GetBytes(Body));
+            return ToArray(CMD1, MainKey, SubKey, ToArray(Body));
         }
 
+        public static byte[] ToArray(string text)
+        {
+            return Encoding.UTF8.GetBytes(text);
+        }
         public static byte[] ToArray(ushort cmd, ushort mainCmd, ushort subCmd, byte[] datas)
         {
             byte[] cmd1 = BitConverter.GetBytes(cmd);

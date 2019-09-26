@@ -126,7 +126,7 @@ namespace SAEASocket.Core.Tcp
 
         void ProcessConnected(SocketAsyncEventArgs e)
         {
-            log4j.Info("e.SocketError " + e.SocketError);
+            // log4j.Info("e.SocketError " + e.SocketError);
             Connected = (e.SocketError == SocketError.Success);
 
             if (Connected)

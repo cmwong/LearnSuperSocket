@@ -20,7 +20,7 @@ namespace SAEASocket
         protected Context _context;
 
         public event EventHandler<Package> OnNewPackageReceived;
-        public event OnErrorHandler OnError;
+        public event SAEA.Sockets.Handler.OnErrorHandler OnError;
         public event SAEA.Sockets.Handler.OnDisconnectedHandler OnDisconnected;
         public event OnConnectedHandler OnConnected;
 
