@@ -24,7 +24,7 @@ namespace testSAEASocket1
             try
             {
                 eventSocketClient.ConnectAsync();
-                // eventSocketClient.Connect();
+                //eventSocketClient.Connect();
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace testSAEASocket1
                         TestSendAlot(eventSocketClient);
                         break;
                     case "2":
-                        Make65535Client();
+                        MakeAlotOfClient();
                         break;
                 }
 
@@ -86,7 +86,7 @@ namespace testSAEASocket1
             log4j.Info("finish");
         }
 
-        private static void Make65535Client()
+        private static void MakeAlotOfClient()
         {
             for (int i = 0; i < 100; i++)
             {

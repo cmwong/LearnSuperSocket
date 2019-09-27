@@ -64,9 +64,10 @@ namespace SAEASocket
             //    }
             //});
 
+            // try to catch the KernelException
             try
             {
-                Task.Run(() =>
+                Action action = () =>
                 {
                     _client.ConnectAsync((e) =>
                     {
@@ -81,13 +82,22 @@ namespace SAEASocket
                                 break;
                         }
                     });
-                }).Wait();
+                };
+                Task task = new Task(action);
+                task.ContinueWith(ExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+                task.Start();
             }
             catch (Exception ex)
             {
                 OnDisconnected?.Invoke("", ex);
             }
+
         }
+        private void ExceptionHandler(Task task)
+        {
+            log4j.Info("ExceptionHandler", task.Exception);
+        }
+
         public void Connect()
         {
             _client.Connect();
