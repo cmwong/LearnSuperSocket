@@ -36,8 +36,8 @@ namespace SAEASocket
                 .SetPort(port)
                 .Build();
 
-            // _client = SocketFactory.CreateClientSocket(option);
-            _client = new Core.Tcp.IocpClientSocket(option);
+            _client = SocketFactory.CreateClientSocket(option);
+            // _client = new Core.Tcp.IocpClientSocket(option);
             _client.OnReceive += _client_OnReceive;
             _client.OnError += _client_OnError;
             _client.OnDisconnected += _client_OnDisconnected;
@@ -50,33 +50,48 @@ namespace SAEASocket
 
         public void ConnectAsync()
         {
-            _client.ConnectAsync((e) =>
-            {
-                log4j.Info("in callback of SocketError, " + e);
-                switch (e)
-                {
-                    case SocketError.Success:
-                        _client_OnConnected();
-                        break;
-                    default:
-                        OnDisconnected?.Invoke("", new SocketException((int)e));
-                        break;
-                }
-            });
-        }
-        //public void Connect()
-        //{
-        //    _client.Connect();
-        //    if (_client.Connected)
-        //    {
-        //        OnConnected?.Invoke();
-        //        sendAliveTimer.Start();
-        //    }
-        //    else
-        //    {
+            //_client.ConnectAsync((e) =>
+            //{
+            //    log4j.Info("in callback of SocketError, " + e);
+            //    switch (e)
+            //    {
+            //        case SocketError.Success:
+            //            _client_OnConnected();
+            //            break;
+            //        default:
+            //            OnDisconnected?.Invoke("", new SocketException((int)e));
+            //            break;
+            //    }
+            //});
 
-        //    }
-        //}
+            try
+            {
+                Task.Run(() =>
+                {
+                    _client.ConnectAsync((e) =>
+                    {
+                        log4j.Info("in callback of SocketError, " + e);
+                        switch (e)
+                        {
+                            case SocketError.Success:
+                                _client_OnConnected();
+                                break;
+                            default:
+                                OnDisconnected?.Invoke("", new SocketException((int)e));
+                                break;
+                        }
+                    });
+                }).Wait();
+            }
+            catch (Exception ex)
+            {
+                OnDisconnected?.Invoke("", ex);
+            }
+        }
+        public void Connect()
+        {
+            _client.Connect();
+        }
 
         private void _client_OnDisconnected(string ID, Exception ex)
         {
@@ -102,7 +117,7 @@ namespace SAEASocket
         private void _client_OnConnected()
         {
             OnConnected?.Invoke();
-            sendAliveTimer.Start();
+            // sendAliveTimer.Start();
         }
 
         private void SendAliveTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

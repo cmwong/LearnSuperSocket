@@ -21,8 +21,15 @@ namespace testSAEASocket1
             eventSocketClient.OnError += EventSocketClient_OnError;
             eventSocketClient.OnDisconnected += EventSocketClient_OnDisconnected;
             eventSocketClient.OnNewPackageReceived += EventSocketClient_OnNewPackageReceived;
-            eventSocketClient.ConnectAsync();
-
+            try
+            {
+                eventSocketClient.ConnectAsync();
+                // eventSocketClient.Connect();
+            }
+            catch (Exception ex)
+            {
+                log4j.Info("ConnectAsync", ex);
+            }
             Console.WriteLine("console waiting input");
             string input = Console.ReadLine();
             while (input != "q")
@@ -81,7 +88,7 @@ namespace testSAEASocket1
 
         private static void Make65535Client()
         {
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 100; i++)
             {
                 Task.Run(() =>
                 {
@@ -91,7 +98,7 @@ namespace testSAEASocket1
                     eventSocketClient.OnNewPackageReceived += EventSocketClient_OnNewPackageReceived;
                     eventSocketClient.ConnectAsync();
                 });
-                // Thread.Sleep(50);
+                Thread.Sleep(10);
             }
         }
     }
