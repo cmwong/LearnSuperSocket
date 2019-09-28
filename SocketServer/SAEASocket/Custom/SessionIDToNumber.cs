@@ -8,7 +8,7 @@ namespace SAEASocket.Custom
 {
     /// <summary>
     /// given a sessionID, return an unique number.
-    /// same sessionID, if exist, will throw Exception
+    /// same sessionID, if exist, just return the unique number
     /// reuse the number after sessionID was remove from dictionary.
     /// </summary>
     class SessionIDToNumber
@@ -60,27 +60,29 @@ namespace SAEASocket.Custom
 
         /// <summary>
         /// Add a string sessionID and get a unique ushort number
+        /// if duplicate sessionID, just return the existing index
         /// throw OverflowException
         ///     when all number 0 to 65534 was in use.
-        /// throw Exception 
-        ///     duplicate sessionID
         /// </summary>
         /// <param name="sessionID"></param>
         /// <returns></returns>
-        public ushort Add(string sessionID)
+        public ushort Add(string sessionID, out bool isAdded)
         {
+            isAdded = false;
             ushort index = 0;
             lock (tLock)
             {
                 if (sessionIDs.Keys.Contains(sessionID))
                 {
-                    throw new Exception("Duplicate sessionID: " + sessionID);
+                    //throw new Exception("Duplicate sessionID: " + sessionID);
+                    index = Get(sessionID);
                 }
                 else
                 {
                     index = (ushort)GetNext();
                     indexs.Add(index, sessionID);
                     sessionIDs.Add(sessionID, index);
+                    isAdded = true;
                 }
             }
 

@@ -75,7 +75,7 @@ namespace SAEASocket
             UserToken ut = (UserToken)userToken;
             try
             {
-                ut.Index = sessionIDToNumber.Add(ut.ID);
+                ut.Index = sessionIDToNumber.Add(ut.ID, out bool isAdded);
                 OnAccepted?.Invoke(userToken);
             }
             catch (OverflowException ex)
