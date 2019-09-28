@@ -8,15 +8,11 @@ namespace SAEASocket.Custom
 {
     /// <summary>
     /// given a sessionID, return an unique number.
-    /// same sessionID, if exist, will return same number.
+    /// same sessionID, if exist, will throw Exception
     /// reuse the number after sessionID was remove from dictionary.
-    /// minValue = 0
-    /// maxValue = 65534
     /// </summary>
     class SessionIDToNumber
     {
-        // private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         private ushort next = 1;
         private object tLock = new object();
         public int MaxValue { get; private set; } = ushort.MaxValue;
@@ -73,7 +69,6 @@ namespace SAEASocket.Custom
         /// <returns></returns>
         public ushort Add(string sessionID)
         {
-            //log4j.Debug("in sID: " + sessionID);
             ushort index = 0;
             lock (tLock)
             {
@@ -88,7 +83,6 @@ namespace SAEASocket.Custom
                     sessionIDs.Add(sessionID, index);
                 }
             }
-            //log4j.Debug("out sID: " + sessionID + ", index: " + index);
 
             return index;
         }
@@ -108,7 +102,6 @@ namespace SAEASocket.Custom
             }
             return rVal;
         }
-
         public bool Remove(string sessionID)
         {
             bool rVal = false;
