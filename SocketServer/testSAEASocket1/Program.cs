@@ -98,7 +98,7 @@ namespace testSAEASocket1
                     eventSocketClient.OnNewPackageReceived += EventSocketClient_OnNewPackageReceived;
                     eventSocketClient.ConnectAsync();
                 });
-                Thread.Sleep(10);
+                // Thread.Sleep(5);
             }
         }
     }

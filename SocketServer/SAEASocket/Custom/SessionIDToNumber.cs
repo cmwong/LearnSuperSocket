@@ -15,99 +15,135 @@ namespace SAEASocket.Custom
     /// </summary>
     class SessionIDToNumber
     {
-        private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        // private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private ushort next = 1;
         private object tLock = new object();
-        private const int maxNumber = ushort.MaxValue;
+        public int MaxValue { get; private set; } = ushort.MaxValue;
 
-        private ConcurrentDictionary<ushort, string> indexKeys = new ConcurrentDictionary<ushort, string>();
-        private ConcurrentDictionary<string, ushort> sessionKeys = new ConcurrentDictionary<string, ushort>();
-        private ConcurrentBag<ushort> pool = new ConcurrentBag<ushort>();
-
-        private ushort GetNext()
+        public SessionIDToNumber() { }
+        public SessionIDToNumber(int maxValue)
         {
-            ushort result = 0;
+            MaxValue = maxValue;
+        }
+
+        private Stack<int> pool = new Stack<int>();
+        private Dictionary<int, string> indexs = new Dictionary<int, string>();
+        private Dictionary<string, int> sessionIDs = new Dictionary<string, int>();
+
+        public bool PoolContains(ushort index)
+        {
+            return pool.Contains(index);
+        }
+        public bool KeyContains(ushort index)
+        {
+            return indexs.Keys.Contains(index);
+        }
+        public bool KeyContains(string sessionID)
+        {
+            return sessionIDs.Keys.Contains(sessionID);
+        }
+
+        internal int GetNext()
+        {
+            int result = 0;
             if (pool.Count > 0)
             {
-                if (pool.TryTake(out result))
-                {
-                    return result;
-                }
-                else
-                {
-                    return GetNext();
-                }
+                result = pool.Pop();
             }
             else
             {
-                lock (tLock)
+                result = next++;
+                if (next > MaxValue && indexs.Keys.Max() >= MaxValue)
                 {
-                    result = next++;
-                    if (next >= maxNumber && indexKeys.Keys.Count() >= maxNumber)
-                    {
-                        throw new OverflowException("Exceed max connection");
-                    }
+                    throw new OverflowException("No more free number");
                 }
             }
             return result;
         }
 
         /// <summary>
+        /// Add a string sessionID and get a unique ushort number
         /// throw OverflowException
-        /// when all number 0 to 65534 was in use.
+        ///     when all number 0 to 65534 was in use.
+        /// throw Exception 
+        ///     duplicate sessionID
         /// </summary>
         /// <param name="sessionID"></param>
         /// <returns></returns>
         public ushort Add(string sessionID)
         {
+            //log4j.Debug("in sID: " + sessionID);
             ushort index = 0;
-            if (sessionKeys.ContainsKey(sessionID))
+            lock (tLock)
             {
-                sessionKeys.TryGetValue(sessionID, out index);
-                return index;
+                if (sessionIDs.Keys.Contains(sessionID))
+                {
+                    throw new Exception("Duplicate sessionID: " + sessionID);
+                }
+                else
+                {
+                    index = (ushort)GetNext();
+                    indexs.Add(index, sessionID);
+                    sessionIDs.Add(sessionID, index);
+                }
             }
-            index = GetNext();
-            indexKeys.TryAdd(index, sessionID);
-            sessionKeys.TryAdd(sessionID, index);
+            //log4j.Debug("out sID: " + sessionID + ", index: " + index);
 
             return index;
         }
-        public void Remove(ushort index)
+        public bool Remove(ushort index)
         {
-            if (indexKeys.TryRemove(index, out string sessionID))
+            bool rVal = false;
+            lock (tLock)
             {
-                sessionKeys.TryRemove(sessionID, out ushort _index);
-                pool.Add(index);
+                if (indexs.TryGetValue(index, out string sessionID))
+                {
+                    indexs.Remove(index);
+                    sessionIDs.Remove(sessionID);
+                    pool.Push(index);
+
+                    rVal = true;
+                }
             }
+            return rVal;
         }
-        public void Remove(string sessionID)
+
+        public bool Remove(string sessionID)
         {
-            Remove(Get(sessionID));
+            bool rVal = false;
+            lock (tLock)
+            {
+                if (sessionIDs.TryGetValue(sessionID, out int index))
+                {
+                    indexs.Remove(index);
+                    sessionIDs.Remove(sessionID);
+                    pool.Push(index);
+
+                    rVal = true;
+                }
+            }
+            return rVal;
         }
 
         public string Get(ushort index)
         {
-            string sessionID;
-            if(!indexKeys.TryGetValue(index, out sessionID))
-            {
-                log4j.Info("cannot found index: " + index);
-            }
+            indexs.TryGetValue(index, out string sessionID);
 
             return sessionID;
         }
         public ushort Get(string sessionID)
         {
-            sessionKeys.TryGetValue(sessionID, out ushort index);
+            sessionIDs.TryGetValue(sessionID, out int index);
 
-            return index;
+            return (ushort)index;
         }
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("next: " + next);
-            sb.AppendLine("indexKeys.Count: " + indexKeys.Keys.Count());
-            sb.AppendLine("sessionKeys.Count: " + sessionKeys.Keys.Count());
+            sb.AppendLine("indexs.Count: " + indexs.Count());
+            sb.AppendLine("sessionIDs.Count: " + sessionIDs.Count());
             sb.AppendLine("pool.Count: " + pool.Count);
 
             return sb.ToString();
