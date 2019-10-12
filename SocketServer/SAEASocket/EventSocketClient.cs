@@ -50,47 +50,19 @@ namespace SAEASocket
 
         public void ConnectAsync()
         {
-            //_client.ConnectAsync((e) =>
-            //{
-            //    log4j.Info("in callback of SocketError, " + e);
-            //    switch (e)
-            //    {
-            //        case SocketError.Success:
-            //            _client_OnConnected();
-            //            break;
-            //        default:
-            //            OnDisconnected?.Invoke("", new SocketException((int)e));
-            //            break;
-            //    }
-            //});
-
-            // try to catch the KernelException
-            try
+            _client.ConnectAsync((e) =>
             {
-                Action action = () =>
+                log4j.Info("in callback of SocketError, " + e);
+                switch (e)
                 {
-                    _client.ConnectAsync((e) =>
-                    {
-                        log4j.Info("in callback of SocketError, " + e);
-                        switch (e)
-                        {
-                            case SocketError.Success:
-                                _client_OnConnected();
-                                break;
-                            default:
-                                OnDisconnected?.Invoke("", new SocketException((int)e));
-                                break;
-                        }
-                    });
-                };
-                Task task = new Task(action);
-                task.ContinueWith(ExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-                task.Start();
-            }
-            catch (Exception ex)
-            {
-                OnDisconnected?.Invoke("", ex);
-            }
+                    case SocketError.Success:
+                        _client_OnConnected();
+                        break;
+                    default:
+                        OnDisconnected?.Invoke("", new SocketException((int)e));
+                        break;
+                }
+            });
 
         }
         private void ExceptionHandler(Task task)
