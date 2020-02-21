@@ -62,7 +62,7 @@ namespace testSAEASocket
         private static void MyServer_OnNewPackageReceived(object userToken, SAEASocket.Custom.Package package)
         {
             SAEASocket.Custom.UserToken ut = (SAEASocket.Custom.UserToken)userToken;
-            // log4j.Info("sID: " + ut.ID + ", index: " + ut.Index + ", " + JsonConvert.SerializeObject(package));
+            log4j.Info("sID: " + ut.ID + ", index: " + ut.Index + ", " + JsonConvert.SerializeObject(package));
 
             // myServer.Send(ut.Index, e.CMD1, e.MainKey, e.SubKey, Encoding.UTF8.GetBytes(e.Body));
             myServer.SendAsync(ut.Index, package);

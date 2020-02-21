@@ -110,7 +110,8 @@ namespace SAEASocket
         {
             try
             {
-                _server.Disconnecte(_server.GetCurrentObj(sessionID));
+                // _server.Disconnecte(_server.GetCurrentObj(sessionID));
+                _server.Disconnecte(sessionID);
             }
             catch (Exception ex)
             {
