@@ -65,10 +65,10 @@ namespace SAEASocket
             });
 
         }
-        private void ExceptionHandler(Task task)
-        {
-            log4j.Info("ExceptionHandler", task.Exception);
-        }
+        //private void ExceptionHandler(Task task)
+        //{
+        //    log4j.Info("ExceptionHandler", task.Exception);
+        //}
 
         public void Connect()
         {

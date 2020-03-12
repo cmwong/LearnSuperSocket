@@ -21,15 +21,18 @@ namespace testSAEASocket1
             eventSocketClient.OnError += EventSocketClient_OnError;
             eventSocketClient.OnDisconnected += EventSocketClient_OnDisconnected;
             eventSocketClient.OnNewPackageReceived += EventSocketClient_OnNewPackageReceived;
-            try
-            {
-                eventSocketClient.ConnectAsync();
-                //eventSocketClient.Connect();
-            }
-            catch (Exception ex)
-            {
-                log4j.Info("ConnectAsync", ex);
-            }
+            eventSocketClient.OnConnected += EventSocketClient_OnConnected;
+            //try
+            //{
+            //    eventSocketClient.ConnectAsync();
+            //    //eventSocketClient.Connect();
+            //}
+            //catch (Exception ex)
+            //{
+            //    log4j.Info("ConnectAsync", ex);
+            //}
+            eventSocketClient.ConnectAsync();
+
             Console.WriteLine("console waiting input");
             string input = Console.ReadLine();
             while (input != "q")
@@ -47,6 +50,11 @@ namespace testSAEASocket1
                 input = Console.ReadLine();
             }
 
+        }
+
+        private static void EventSocketClient_OnConnected()
+        {
+            log4j.Info("Connected");
         }
 
         private static void EventSocketClient_OnNewPackageReceived(object sender, SAEASocket.Custom.Package package)
