@@ -47,6 +47,9 @@ namespace testSocketClient
                     case "2":
                         Send_1_2(eventSocket);
                         break;
+                    case "3":
+                        MakeAlotOfClient();
+                        break;
                 }
 
                 input = Console.ReadLine();
@@ -96,6 +99,24 @@ namespace testSocketClient
             SocketClient.PackageInfo.EventPackageInfo pkg = e.Package;
 
             log4j.Info($"k: {pkg.MainKey}, sk: {pkg.SubKey}, b: {pkg.Body}");
+        }
+
+        private static void MakeAlotOfClient()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Task.Run(() =>
+                {
+                    SocketClient.EventSocket eventSocket = new SocketClient.EventSocket("127.0.0.1", 8800);
+                    eventSocket.NewPackageReceived += EventSocket_NewPackageReceived;
+                    eventSocket.Connected += EventSocket_Connected;
+                    eventSocket.Error += EventSocket_Error;
+                    eventSocket.Closed += EventSocket_Closed;
+
+                    Task<bool> ts = eventSocket.Connect();
+                });
+                // Thread.Sleep(5);
+            }
         }
     }
 }

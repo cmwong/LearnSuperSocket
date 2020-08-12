@@ -96,7 +96,7 @@ namespace testSAEASocket1
 
         private static void MakeAlotOfClient()
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10; i++)
             {
                 Task.Run(() =>
                 {

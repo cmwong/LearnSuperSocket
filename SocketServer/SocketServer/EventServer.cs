@@ -40,7 +40,7 @@ namespace SocketServer
             ushort key = 1;
             ushort subKey = 255;
             string data = "this is some text 哈哈 ";
-            int count = 6000;
+            int count = 100;
 
             log4j.Info("TestSendAlot " + count);
             for (int i = 0; i < count; i++)

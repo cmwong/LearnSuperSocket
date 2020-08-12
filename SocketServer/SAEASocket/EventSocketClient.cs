@@ -27,7 +27,6 @@ namespace SAEASocket
         private System.Timers.Timer sendAliveTimer;
 
         public bool IsConnected { get { return _client.Connected; } }
-
         public EventSocketClient(string ipAddress, int port)
         {
             _context = new Context();
