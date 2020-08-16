@@ -21,11 +21,17 @@ namespace SocketServer
         private void Init()
         {
             this.NewRequestReceived += EventServer_NewRequestReceived;
+            this.NewSessionConnected += EventServer_NewSessionConnected;
+        }
+
+        private void EventServer_NewSessionConnected(EventSession session)
+        {
+            //throw new NotImplementedException();
         }
 
         private void EventServer_NewRequestReceived(EventSession session, EventPackageInfo requestInfo)
         {
-            log4j.Info($"sID: {session.SessionID}, k: {requestInfo.MainKey}, sk: {requestInfo.SubKey}, b: {requestInfo.Body}");
+            // log4j.Info($"sID: {session.SessionID}, k: {requestInfo.MainKey}, sk: {requestInfo.SubKey}, b: {requestInfo.Body}");
             if (requestInfo.MainKey == 1 && requestInfo.SubKey == 2)
             {
                 Task.Run(() =>
@@ -40,7 +46,7 @@ namespace SocketServer
             ushort key = 1;
             ushort subKey = 255;
             string data = "this is some text 哈哈 ";
-            int count = 100;
+            int count = 10000;
 
             log4j.Info("TestSendAlot " + count);
             for (int i = 0; i < count; i++)
@@ -48,6 +54,7 @@ namespace SocketServer
                 foreach (EventSession eventSession in GetAllSessions())
                 {
                     eventSession.Send(key, subKey, data + ": " + i);
+                    // eventSession.TrySend()
                 }
             }
             log4j.Info("finish");

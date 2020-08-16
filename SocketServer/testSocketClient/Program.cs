@@ -50,6 +50,9 @@ namespace testSocketClient
                     case "3":
                         MakeAlotOfClient();
                         break;
+                    case "4":
+                        Disconnect(eventSocket);
+                        break;
                 }
 
                 input = Console.ReadLine();
@@ -103,7 +106,7 @@ namespace testSocketClient
 
         private static void MakeAlotOfClient()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 100; i++)
             {
                 Task.Run(() =>
                 {
@@ -117,6 +120,11 @@ namespace testSocketClient
                 });
                 // Thread.Sleep(5);
             }
+        }
+
+        private static void Disconnect(SocketClient.EventSocket eventSocket)
+        {
+            eventSocket.Close();
         }
     }
 }

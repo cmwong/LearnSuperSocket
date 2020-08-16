@@ -19,7 +19,9 @@ namespace testSocketServer
                 Port = 8800,
                 MaxRequestLength = 2048,
                 // TextEncoding = "UTF-8"
-                MaxConnectionNumber = ushort.MaxValue
+                MaxConnectionNumber = 300,
+                // SendingQueueSize = 2000,
+                SyncSend = false,
             };
 
             if (!appServer.Setup(serverConfig))
