@@ -31,7 +31,7 @@ namespace SocketServer
 
         private void EventServer_NewRequestReceived(EventSession session, EventPackageInfo requestInfo)
         {
-            // log4j.Info($"sID: {session.SessionID}, k: {requestInfo.MainKey}, sk: {requestInfo.SubKey}, b: {requestInfo.Body}");
+            log4j.Info($"sID: {session.SessionID}, k: {requestInfo.MainKey}, sk: {requestInfo.SubKey}, b: {requestInfo.Body}");
             if (requestInfo.MainKey == 1 && requestInfo.SubKey == 2)
             {
                 Task.Run(() =>
@@ -53,14 +53,45 @@ namespace SocketServer
             {
                 foreach (EventSession eventSession in GetAllSessions())
                 {
-                    eventSession.Send(key, subKey, data + ": " + i);
-                    // eventSession.TrySend()
+                    try
+                    {
+                        eventSession.Send(key, subKey, data + ": " + i);
+                        // eventSession.TrySend()
+                    } catch(Exception ex)
+                    {
+                        log4j.Error($"TestSendAlot: {eventSession.SessionID} {data} {i}", ex);
+                    }
                 }
             }
             log4j.Info("finish");
 
         }
+        public void TestSend10()
+        {
+            ushort key = 1;
+            ushort subKey = 255;
+            string data = "this is another message";
+            int count = 10;
 
+            log4j.Info("TestSend10 " + count);
+            for (int i = 0; i < count; i++)
+            {
+                foreach (EventSession eventSession in GetAllSessions())
+                {
+                    try
+                    {
+                        eventSession.Send(key, subKey, data + ": " + i);
+                        // eventSession.TrySend()
+                    }
+                    catch (Exception ex)
+                    {
+                        log4j.Error($"TestSend10: {eventSession.SessionID} {data} {i}", ex);
+                    }
+                }
+            }
+            log4j.Info("finish");
+
+        }
         private void TestSendAlot(EventSession session)
         {
             ushort key = 1;

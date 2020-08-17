@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Log.config", Watch = true)]
 namespace testSocketClient
@@ -11,11 +12,13 @@ namespace testSocketClient
     {
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // private static SocketClient.EventSocket eventSocket;
+
+        private static string serverIP = "172.30.30.62";
         static void Main(string[] args)
         {
             log4j.Info("start main");
 
-            SocketClient.EventSocket eventSocket = new SocketClient.EventSocket("127.0.0.1", 8800);
+            SocketClient.EventSocket eventSocket = new SocketClient.EventSocket(serverIP, 8800);
             eventSocket.NewPackageReceived += EventSocket_NewPackageReceived;
             eventSocket.Connected += EventSocket_Connected;
             eventSocket.Error += EventSocket_Error;
@@ -52,6 +55,9 @@ namespace testSocketClient
                         break;
                     case "4":
                         Disconnect(eventSocket);
+                        break;
+                    case "5":
+                        MakeAlotOfClient50();
                         break;
                 }
 
@@ -102,6 +108,7 @@ namespace testSocketClient
             SocketClient.PackageInfo.EventPackageInfo pkg = e.Package;
 
             log4j.Info($"k: {pkg.MainKey}, sk: {pkg.SubKey}, b: {pkg.Body}");
+            //Thread.Sleep(1000);
         }
 
         private static void MakeAlotOfClient()
@@ -110,7 +117,7 @@ namespace testSocketClient
             {
                 Task.Run(() =>
                 {
-                    SocketClient.EventSocket eventSocket = new SocketClient.EventSocket("127.0.0.1", 8800);
+                    SocketClient.EventSocket eventSocket = new SocketClient.EventSocket(serverIP, 8800);
                     eventSocket.NewPackageReceived += EventSocket_NewPackageReceived;
                     eventSocket.Connected += EventSocket_Connected;
                     eventSocket.Error += EventSocket_Error;
@@ -121,7 +128,23 @@ namespace testSocketClient
                 // Thread.Sleep(5);
             }
         }
+        private static void MakeAlotOfClient50()
+        {
+            for (int i = 0; i <= 50; i++)
+            {
+                Task.Run(() =>
+                {
+                    SocketClient.EventSocket eventSocket = new SocketClient.EventSocket(serverIP, 8800);
+                    eventSocket.NewPackageReceived += EventSocket_NewPackageReceived;
+                    eventSocket.Connected += EventSocket_Connected;
+                    eventSocket.Error += EventSocket_Error;
+                    eventSocket.Closed += EventSocket_Closed;
 
+                    Task<bool> ts = eventSocket.Connect();
+                });
+                // Thread.Sleep(5);
+            }
+        }
         private static void Disconnect(SocketClient.EventSocket eventSocket)
         {
             eventSocket.Close();
