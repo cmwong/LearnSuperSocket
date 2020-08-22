@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "Config/Log.config", Watch = true)]
+
 namespace testSocketServer
 {
     class Program
@@ -16,12 +18,14 @@ namespace testSocketServer
 
             SuperSocket.SocketBase.Config.ServerConfig serverConfig = new SuperSocket.SocketBase.Config.ServerConfig
             {
+                Ip = "0.0.0.0",
                 Port = 8800,
                 MaxRequestLength = 2048,
                 // TextEncoding = "UTF-8"
-                MaxConnectionNumber = 300,
-                // SendingQueueSize = 2000,
-                SyncSend = false,
+                MaxConnectionNumber = 1000,
+                SendingQueueSize = 20000,
+                // SyncSend = false,
+                SendTimeOut = 2000
             };
 
             if (!appServer.Setup(serverConfig))
@@ -48,6 +52,9 @@ namespace testSocketServer
                     case "1":
                         TestSendAlotToAllClient(appServer);
                         break;
+                    case "2":
+                        TestSend10ToAll(appServer);
+                        break;
                 }
                 input = Console.ReadLine();
             }
@@ -60,6 +67,13 @@ namespace testSocketServer
         {
             log4j.Info("start sending");
             eventServer.TestSendAlot();
+            log4j.Info("finish");
+        }
+
+        private static void TestSend10ToAll(SocketServer.EventServer eventServer)
+        {
+            log4j.Info("start sending");
+            eventServer.TestSend10();
             log4j.Info("finish");
         }
     }

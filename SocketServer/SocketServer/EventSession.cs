@@ -18,7 +18,7 @@ namespace SocketServer
         }
         protected override void OnSessionClosed(CloseReason reason)
         {
-            log4j.Info("session closed " + reason.ToString());
+            log4j.Info("session closed " + this.SessionID + " " + reason.ToString());
             base.OnSessionClosed(reason);
         }
         protected override void HandleUnknownRequest(EventPackageInfo requestInfo)
