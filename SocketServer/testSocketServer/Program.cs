@@ -23,7 +23,7 @@ namespace testSocketServer
                 MaxRequestLength = 2048,
                 // TextEncoding = "UTF-8"
                 MaxConnectionNumber = 1000,
-                SendingQueueSize = 20000,
+                //SendingQueueSize = 20000,
                 // SyncSend = false,
                 SendTimeOut = 2000
             };

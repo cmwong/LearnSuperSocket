@@ -22,11 +22,17 @@ namespace SocketServer
         {
             this.NewRequestReceived += EventServer_NewRequestReceived;
             this.NewSessionConnected += EventServer_NewSessionConnected;
+            this.SessionClosed += EventServer_SessionClosed;
+        }
+
+        private void EventServer_SessionClosed(EventSession session, CloseReason value)
+        {
+            log4j.Info($"sID: {session.SessionID}");
         }
 
         private void EventServer_NewSessionConnected(EventSession session)
         {
-            //throw new NotImplementedException();
+            log4j.Info($"sID: {session.SessionID}");
         }
 
         private void EventServer_NewRequestReceived(EventSession session, EventPackageInfo requestInfo)

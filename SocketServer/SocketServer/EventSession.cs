@@ -24,7 +24,7 @@ namespace SocketServer
         protected override void HandleUnknownRequest(EventPackageInfo requestInfo)
         {
             log4j.Info($"unknow request k: {requestInfo.MainKey}, sk: {requestInfo.SubKey}, b: {requestInfo.Body}");
-            
+
         }
 
         public bool Send(ushort mainCmd, ushort subCmd, string dataText)
@@ -61,12 +61,22 @@ namespace SocketServer
             }
 
             ArraySegment<byte> segment = new ArraySegment<byte>(sendData);
-            Send(segment);
+            try
+            {
+                Send(segment);
+            }
+            catch (TimeoutException ex)
+            {
+                log4j.Error("Send timeout", ex);
+                // Close(CloseReason.TimeOut);
+                Close();
+            }
             return true;
 
             // 20190828 don't use TrySend. will hv missing message
             // return TrySend(segment);
 
         }
+
     }
 }

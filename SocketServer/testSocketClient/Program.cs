@@ -108,7 +108,7 @@ namespace testSocketClient
             SocketClient.PackageInfo.EventPackageInfo pkg = e.Package;
 
             log4j.Info($"k: {pkg.MainKey}, sk: {pkg.SubKey}, b: {pkg.Body}");
-            //Thread.Sleep(1000);
+            //Thread.Sleep(500);
         }
 
         private static void MakeAlotOfClient()
