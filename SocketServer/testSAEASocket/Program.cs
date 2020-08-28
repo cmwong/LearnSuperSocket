@@ -88,7 +88,7 @@ namespace testSAEASocket
             //ushort key = 1;
             //ushort subKey = 255;
             string data = "this is some text 爸爸 ";
-            int count = 1000;
+            int count = 10000;
 
             SAEASocket.Custom.Package package = new SAEASocket.Custom.Package
             {
