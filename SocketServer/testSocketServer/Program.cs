@@ -20,11 +20,11 @@ namespace testSocketServer
             {
                 Ip = "0.0.0.0",
                 Port = 8800,
-                MaxRequestLength = 2048,
+                MaxRequestLength = 2048,            //1024
                 // TextEncoding = "UTF-8"
-                MaxConnectionNumber = 1000,
-                //SendingQueueSize = 20000,
-                // SyncSend = false,
+                MaxConnectionNumber = 100,
+                //SendingQueueSize = 20000,         //5
+                SyncSend = true,
                 SendTimeOut = 2000
             };
 

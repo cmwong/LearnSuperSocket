@@ -28,6 +28,7 @@ namespace SocketServer
         private void EventServer_SessionClosed(EventSession session, CloseReason value)
         {
             log4j.Info($"sID: {session.SessionID}");
+            session.Dispose();
         }
 
         private void EventServer_NewSessionConnected(EventSession session)
@@ -52,16 +53,23 @@ namespace SocketServer
             ushort key = 1;
             ushort subKey = 255;
             string data = "this is some text 哈哈 ";
-            int count = 10000;
+            int count = 50000;
 
             log4j.Info("TestSendAlot " + count);
+            List<EventSession> eventSessions = GetAllSessions().ToList();
+            log4j.Info("count: " + eventSessions.Count);
+
             for (int i = 0; i < count; i++)
             {
-                foreach (EventSession eventSession in GetAllSessions())
+                foreach (EventSession eventSession in eventSessions)
                 {
                     try
                     {
-                        eventSession.Send(key, subKey, data + ": " + i);
+                        bool isSend = eventSession.Send(key, subKey, data + ": " + i);
+                        if(!isSend)
+                        {
+                            eventSession.Close();
+                        }
                         // eventSession.TrySend()
                     } catch(Exception ex)
                     {
@@ -80,9 +88,12 @@ namespace SocketServer
             int count = 10;
 
             log4j.Info("TestSend10 " + count);
+            List<EventSession> eventSessions = GetAllSessions().ToList();
+            log4j.Info("count: " + eventSessions.Count);
+
             for (int i = 0; i < count; i++)
             {
-                foreach (EventSession eventSession in GetAllSessions())
+                foreach (EventSession eventSession in eventSessions)
                 {
                     try
                     {

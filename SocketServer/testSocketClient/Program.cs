@@ -13,24 +13,28 @@ namespace testSocketClient
         private static readonly log4net.ILog log4j = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         // private static SocketClient.EventSocket eventSocket;
 
-        private static string serverIP = "172.30.30.62";
+        private static string serverIP = "127.0.0.1";
+        private static SocketClient.EventSocket eventSocket;
         static void Main(string[] args)
         {
             log4j.Info("start main");
 
-            SocketClient.EventSocket eventSocket = new SocketClient.EventSocket(serverIP, 8800);
-            eventSocket.NewPackageReceived += EventSocket_NewPackageReceived;
-            eventSocket.Connected += EventSocket_Connected;
-            eventSocket.Error += EventSocket_Error;
-            eventSocket.Closed += EventSocket_Closed;
+            //eventSocket = new SocketClient.EventSocket(serverIP, 8800);
+            //eventSocket.NewPackageReceived += EventSocket_NewPackageReceived;
+            //eventSocket.Connected += EventSocket_Connected;
+            //eventSocket.Error += EventSocket_Error;
+            //eventSocket.Closed += EventSocket_Closed;
 
-            Task<bool> ts = eventSocket.Connect();
-            ts.Wait();
-            log4j.Info("after ts.Wait() - " + ts.Result);
-            if (!ts.Result)
-            {
-                return;
-            }
+            //Task<bool> ts = eventSocket.Connect();
+            //ts.Wait();
+            //log4j.Info("after ts.Wait() - " + ts.Result);
+            //if (!ts.Result)
+            //{
+            //    return;
+            //}
+
+            Connect();
+
             //ushort max = ushort.MaxValue;
             //string body = "0";
             //for (ushort i = 0; i < max; i++)
@@ -64,7 +68,15 @@ namespace testSocketClient
                 input = Console.ReadLine();
             }
         }
-
+        private static void Connect()
+        {
+            eventSocket = new SocketClient.EventSocket(serverIP, 8800);
+            eventSocket.NewPackageReceived += EventSocket_NewPackageReceived;
+            eventSocket.Connected += EventSocket_Connected;
+            eventSocket.Error += EventSocket_Error;
+            eventSocket.Closed += EventSocket_Closed;
+            Task<bool> ts = eventSocket.Connect();
+        }
         private static void TestSendAlot(SocketClient.EventSocket eventSocket)
         {
             ushort key = 1;
@@ -89,6 +101,10 @@ namespace testSocketClient
         private static void EventSocket_Closed(object sender, EventArgs e)
         {
             log4j.Info("socket closed");
+            // SocketClient.EventSocket eventSocket = (SocketClient.EventSocket)sender;
+            
+            Thread.Sleep(5000);
+            Connect();
         }
 
         private static void EventSocket_Error(object sender, SuperSocket.ClientEngine.ErrorEventArgs e)
