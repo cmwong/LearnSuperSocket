@@ -35,10 +35,10 @@ namespace testSAEASocket
                 switch (input)
                 {
                     case "1":
-                        DisconnectClient();
+                        TestSendAlot();
                         break;
                     case "2":
-                        TestSendAlot();
+                        DisconnectClient();
                         break;
                 }
 
@@ -77,10 +77,13 @@ namespace testSAEASocket
 
         private static void DisconnectClient()
         {
-            Console.Write("sessionID: ");
-            string sessionID = Console.ReadLine();
-            myServer.Disconnect(sessionID);
-            
+            //Console.Write("sessionID: ");
+            //string sessionID = Console.ReadLine();
+            //myServer.Disconnect(sessionID);
+            foreach(string id in sessions.Keys.ToList())
+            {
+                myServer.Disconnect(id);
+            }
         }
 
         private static void TestSendAlot()
@@ -88,7 +91,7 @@ namespace testSAEASocket
             //ushort key = 1;
             //ushort subKey = 255;
             string data = "this is some text 爸爸 ";
-            int count = 10000;
+            int count = 50000;
 
             SAEASocket.Custom.Package package = new SAEASocket.Custom.Package
             {
@@ -100,12 +103,16 @@ namespace testSAEASocket
             for (int i = 0; i < count; i++)
             {
                 package.Body = data + " " + i;
-                foreach (SAEASocket.Custom.UserToken ut in sessions.Values)
+                //foreach (SAEASocket.Custom.UserToken ut in sessions.Values.ToList())
+                //{
+                //    myServer.SendAsync(ut.Index, package);
+                //}
+                foreach(string id in sessions.Keys.ToList())
                 {
-                    myServer.SendAsync(ut.Index, package);
+                    myServer.SendAsync(id, package);
                 }
             }
-            log4j.Info("finish");
+            log4j.Info("finish TestSendAlot");
         }
     }
 }

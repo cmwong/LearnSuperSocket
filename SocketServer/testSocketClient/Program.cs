@@ -33,7 +33,7 @@ namespace testSocketClient
             //    return;
             //}
 
-            Connect();
+            Connect(eventSocket, "a");
 
             //ushort max = ushort.MaxValue;
             //string body = "0";
@@ -68,9 +68,10 @@ namespace testSocketClient
                 input = Console.ReadLine();
             }
         }
-        private static void Connect()
+        private static void Connect(SocketClient.EventSocket eventSocket, string name)
         {
             eventSocket = new SocketClient.EventSocket(serverIP, 8800);
+            eventSocket.Name = name;
             eventSocket.NewPackageReceived += EventSocket_NewPackageReceived;
             eventSocket.Connected += EventSocket_Connected;
             eventSocket.Error += EventSocket_Error;
@@ -104,36 +105,41 @@ namespace testSocketClient
             // SocketClient.EventSocket eventSocket = (SocketClient.EventSocket)sender;
             
             Thread.Sleep(5000);
-            Connect();
+            Task<bool> isConnect = ((SocketClient.EventSocket)sender).Connect();
+
         }
 
         private static void EventSocket_Error(object sender, SuperSocket.ClientEngine.ErrorEventArgs e)
         {
             log4j.Info("", e.Exception);
+            Thread.Sleep(5000);
+            Task<bool> isConnect = ((SocketClient.EventSocket)sender).Connect();
         }
 
         private static void EventSocket_Connected(object sender, EventArgs e)
         {
             SocketClient.EventSocket eventSocket = (SocketClient.EventSocket)sender;
-            log4j.Info("connected.");
+            log4j.Info("connected. " + eventSocket.Name);
             // eventSocket.Send(1, 1, "1_1");
         }
 
         private static void EventSocket_NewPackageReceived(object sender, SuperSocket.ClientEngine.PackageEventArgs<SocketClient.PackageInfo.EventPackageInfo> e)
         {
             SocketClient.PackageInfo.EventPackageInfo pkg = e.Package;
-
-            log4j.Info($"k: {pkg.MainKey}, sk: {pkg.SubKey}, b: {pkg.Body}");
+            SocketClient.EventSocket eventSocket = (SocketClient.EventSocket)sender;
+            log4j.Info($"{eventSocket.Name} k: {pkg.MainKey}, sk: {pkg.SubKey}, b: {pkg.Body}");
             //Thread.Sleep(500);
         }
 
         private static void MakeAlotOfClient()
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 9; i++)
             {
                 Task.Run(() =>
                 {
+                    int j = i;
                     SocketClient.EventSocket eventSocket = new SocketClient.EventSocket(serverIP, 8800);
+                    eventSocket.Name = j.ToString();
                     eventSocket.NewPackageReceived += EventSocket_NewPackageReceived;
                     eventSocket.Connected += EventSocket_Connected;
                     eventSocket.Error += EventSocket_Error;
@@ -141,7 +147,7 @@ namespace testSocketClient
 
                     Task<bool> ts = eventSocket.Connect();
                 });
-                // Thread.Sleep(5);
+                Thread.Sleep(100);
             }
         }
         private static void MakeAlotOfClient50()

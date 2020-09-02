@@ -145,5 +145,9 @@ namespace SAEASocket
             }
             _server.SendAsync(sessionID, package.ToArray());
         }
+        public void SendAsync(string sessionID, Package package)
+        {
+            _server.SendAsync(sessionID, package.ToArray());
+        }
     }
 }

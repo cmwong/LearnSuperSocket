@@ -15,6 +15,7 @@ namespace SocketClient
 
         public string ServerIP { get; protected set; }
         public int ServerPort { get; protected set; }
+        public string Name { get; set; }
 
         private System.Timers.Timer sendAliveTimer;
 
