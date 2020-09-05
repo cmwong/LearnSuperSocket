@@ -22,7 +22,7 @@ namespace testSAEASocket
         {
             log4j.Info("start main");
 
-            myServer = new SAEASocket.EventSocketServer("127.0.0.1", 8800);
+            myServer = new SAEASocket.EventSocketServer("127.0.0.1", 9000);
             myServer.OnNewPackageReceived += MyServer_OnNewPackageReceived;
             myServer.OnAccepted += MyServer_OnAccepted;
             myServer.OnDisconnected += MyServer_OnDisconnected;
